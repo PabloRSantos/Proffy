@@ -19,7 +19,7 @@ const Landing = () => {
 
         api.get("connections")
         .then(response => setTotalConnections(response.data.total))
-
+        // conexoes
     }, [])
 
     return (
