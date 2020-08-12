@@ -1,0 +1,39 @@
+#sucess-background {
+    background-color: var(--color-primary);
+    background-image: url(../../assets/images/success-background.svg);
+    background-position: center;
+
+    width: 100vw;
+    height: 100vh;
+
+    position: fixed;
+    z-index: 5;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#sucess-background .sucessMessage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+}
+
+#sucess-background .sucessMessage h1 {
+    color: var(--color-title-in-primary);
+    font-size: 5.4rem;
+    font-weight: 700;
+}
+
+#sucess-background .sucessMessage p {
+    color: var(--color-text-in-primary);
+    font-size: 1.6rem;
+    font-weight: 400;
+}
+
+#sucess-background .sucessMessage button {
+    width: 60%;
+    margin-top: 8rem;
+}

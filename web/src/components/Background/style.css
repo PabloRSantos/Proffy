@@ -1,0 +1,46 @@
+.background-component {
+    background-color: var(--color-primary);
+    background-image: url(../../assets/images/Background.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+
+    width: 50vw;
+    height: 100vh;
+    padding: 0 2rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.background-component .titulo {
+    color: var(--color-title-in-primary);
+
+    display: flex;
+    flex-direction: column;
+}
+
+.background-component .titulo img {
+    width: 80%;
+}
+
+.background-component .titulo span {
+    font-size: 2rem;
+    font-weight: 500;
+}
+
+@media(max-width: 783px) {
+    .background-component {
+        width: 100vw;
+        height: 25rem;
+    }
+
+    .background-component .titulo img {
+        width: 60%;
+    }
+    
+    .background-component .titulo span {
+        font-size: 1.5rem;
+    }
+
+}

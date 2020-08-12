@@ -1,0 +1,114 @@
+#page-login {
+    width: 100vw;
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: space-between;
+}
+
+#page-login .right {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+
+    padding: 20vh 1rem 8vh;
+    width: 35rem;
+    margin: 0 auto;
+}
+
+
+#page-login .right form h1 {
+    color: var(--color-text-title);
+    font-size: 3.6rem;
+    align-self: flex-start;
+    margin-bottom: 4rem;
+    font-weight: 700;
+}
+
+
+#page-login .right .inputs .input-block {
+    margin: 0;
+}
+
+#page-login .right .inputs .input-block input{
+    margin: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+
+    width: 30rem;
+    padding: 3rem 1.6rem;
+}
+
+#page-login .right .inputs .input-block + .input-block input{
+    border-radius: .8rem;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+
+#page-login .right form .bottom{
+    color: var(--color-text-complement);
+    font-size: 1.4rem;
+
+    margin: 2.6rem 0 4rem;
+
+    display: flex;
+    justify-content: space-between;
+}
+
+#page-login .right form .bottom .remember input{
+    margin-right: .5rem;
+}
+
+#page-login .right footer {
+ 
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+} 
+
+#page-login .right footer p {
+    font-size: 1.6rem;
+    font-weight: 500;
+}
+
+#page-login .right footer p a {
+    color: var(--color-primary);
+}
+
+#page-login .right footer span {
+    font-size: 1.2rem;
+    color: var(--color-text-complement);
+
+    display: flex;
+    align-items: center;
+}
+
+#page-login .right footer span img {
+    margin-left: .5rem;
+}
+
+@media(max-width: 783px) {
+    #page-login {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    #page-login .right {
+    padding: 3rem 1rem;
+}
+
+    #page-login .right form h1 {
+        margin-bottom: 2rem;
+    }
+
+    #page-login .right footer {
+        margin: 3rem 0 0;
+    } 
+
+    
+}
+

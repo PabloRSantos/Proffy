@@ -1,0 +1,20 @@
+button {
+    width: 100%;
+    height: 5.6rem;
+    border-radius: .8rem;
+    outline: none;
+    border: none;
+    background-color: var( --color-disabled);
+    color: var(--color-text-complement);
+}
+
+.active {
+    background-color: var(--color-secundary);
+    color: var(--color-button-text);
+    cursor: pointer;
+    transition: .3s;
+}
+
+.active:hover {
+    background-color: var(--color-secundary-dark);
+}

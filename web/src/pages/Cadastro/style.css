@@ -1,0 +1,75 @@
+#page-cadastro {
+        width: 100vw;
+        min-height: 100vh;
+    
+        display: flex;
+        justify-content: space-between;
+}
+
+#page-cadastro .left {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+
+    padding: 20vh 1rem 8vh;
+    width: 35rem;
+    margin: 0 auto;
+}
+
+#page-cadastro .left form {
+    flex: 1;
+}
+
+#page-cadastro .left form .top {
+    align-self: flex-start;
+    margin-bottom: 4rem;
+}
+
+#page-cadastro .left form .top h1 {
+    color: var(--color-text-title);
+    font-size: 3.6rem;
+    font-weight: 700;
+}
+
+#page-cadastro .left .inputs .input-block {
+    margin: 0;
+}
+
+#page-cadastro .left .inputs .input-block input{
+    margin: 0;
+    border-radius: 0;
+
+    padding: 3rem 1.6rem;
+}
+
+#page-cadastro .left .inputs .input-block:nth-child(2) input{
+    border-top-left-radius: 0.8rem;
+    border-top-right-radius: 0.8rem;
+}
+
+#page-cadastro .left .inputs .input-block:nth-child(5) input{
+    border-bottom-left-radius: 0.8rem;
+    border-bottom-right-radius: 0.8rem;
+}
+
+#page-cadastro .left form button {
+    margin-top: 4rem;
+}
+
+@media(max-width: 783px) {
+    #page-cadastro {
+        display: flex;
+        flex-direction: column-reverse;
+        justify-content: flex-start;
+    }
+
+    #page-cadastro .left {
+    padding: 3rem 1rem;
+}
+
+    #page-cadastro .left form h1 {
+        margin-bottom: 2rem;
+    }
+
+}
