@@ -6,9 +6,11 @@ export async function up(knex: Knex){
         table.string("name")
         table.string("password").notNullable()
         table.string("email").notNullable()
-        table.string("avatar")
+        table.string("avatar").defaultTo('default.png')
         table.string("whatsapp")
         table.string("bio")
+        table.string("resetPassword")
+        table.date("resetPasswordTime")
     })
 }
 

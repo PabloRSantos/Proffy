@@ -15,11 +15,11 @@ routes.post("/connections",conenctionsController.create)
 routes.get("/connections", conenctionsController.index)
 
 routes.post('/cadastro', usersController.create)
-routes.get('/login', usersController.login)
+routes.post('/login', usersController.login)
+routes.get('/recover/password', usersController.recoverPassword)
+routes.post('/resetPassword', usersController.resetPassword)
 
-routes.use(authMiddleware)
-
-routes.post("/classes", classesControllers.create)
+routes.post("/classes", authMiddleware, classesControllers.create)
 routes.get("/classes", classesControllers.index)
 
 
