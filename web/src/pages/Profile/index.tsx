@@ -7,11 +7,17 @@ import warningIcon from "../../assets/images/icons/warning.svg"
 import Textarea from '../../components/Textarea';
 import Select from '../../components/Select';
 import api from '../../services/api';
-import {IUserState} from '../Profile'
 
+export interface IUserState {
+  name: string,
+  sobrenome: string,
+  email: string,
+  whatsapp: string,
+  bio: string,
+  avatar: string
+}
 
-
-const TeacherForm = () => {
+const Profile = () => {
   const [scheduleItems, setScheduleItems] = useState([{
     week_day: 0, from: "", to:""
   }])
@@ -20,28 +26,34 @@ const TeacherForm = () => {
   const [user, setUser] = useState<IUserState>({
     name: '',
     sobrenome: '',
-    bio: '',
-    avatar: '',
     email: '',
-    whatsapp: ''
+    whatsapp: '',
+    bio: '',
+    avatar: ''
   })
+  const [classes, setClasses] = useState('')
+  
 
   const history = useHistory()
 
   useEffect(() => {
-      async function loadDataUser(){
-        try {
-          const {data} = await api.get('user')
+    async function loadDatas(){
+      
+      try {
+        const user = await api.get('user')
+        const classes = await api.get('class')
 
-          setUser(data)
+        console.log(classes)
 
-        } catch (e) {
-            alert('Erro ao procurar dados')
-            console.log(e)
-        }
+        setUser(user.data)
+
+      } catch (e) {
+        console.log(e)
+        alert('Erro ao carregar dados, tente novamente')
       }
+    }
 
-      loadDataUser()
+    loadDatas()
 
   }, [])
 
@@ -61,33 +73,30 @@ const TeacherForm = () => {
     setScheduleItems(updatedScheduleItems)
   }
 
-  function handleCreateClass(e: FormEvent){
+  async function handleCreateClass(e: FormEvent){
       e.preventDefault()
 
-      api.post("classes", {
-        name: user.name,
-        avatar: user.avatar,
-        whatsapp: user.whatsapp,
-        bio: user.bio,
+      try {
+      await api.post("classes", {
+        user,
         subject,
         cost: Number(cost),
         schedule: scheduleItems
       })
-      .then(() => {
+      
         alert("Cadastro realizado com sucesso")
         history.push("/")
-      })
-      .catch(() => {
-        alert("Erro no cadastro")
-      })
 
-
+    } catch {
+      alert("Erro no cadastro")
+    }
+        
   }
 
   return (
     <div id="page-teacher-form" className="container">
     <PageHeader 
-    title="Que incrivel que você quer dar aulas"
+    title={`${user.name} ${user.sobrenome}`}
     description = "O primeiro passo é preencher esse formulário de inscrição"
     />
 
@@ -99,9 +108,16 @@ const TeacherForm = () => {
 
             <Input
             name="name"
-            label="Nome completo"
+            label="Nome"
             value={user.name}
             onChange={e => setUser({...user, 'name': e.target.value})}/>
+
+
+            <Input
+            name="sobrenome"
+            label="Sobrenome"
+            value={user.sobrenome}
+            onChange={e => setUser({...user, 'sobrenome': e.target.value})}/>
 
             <Input
             name="avatar"
@@ -215,4 +231,4 @@ const TeacherForm = () => {
   );
 }
 
-export default TeacherForm;
+export default Profile;

@@ -1,0 +1,59 @@
+#page-recoverPassword {
+    width: 100vw;
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+}
+
+#page-recoverPassword .left {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+
+    padding: 20vh 1rem 8vh;
+    width: 35rem;
+    margin: 0 auto;
+    flex: 1;
+}
+
+#page-recoverPassword .left form {
+    flex: 1;
+}
+
+#page-recoverPassword .left form .top {
+    align-self: flex-start;
+    margin-bottom: 4rem;
+}
+
+#page-recoverPassword .left form .top h1 {
+    color: var(--color-text-title);
+    font-size: 3.6rem;
+    font-weight: 700;
+    line-height: 4.5rem;
+
+    margin-bottom: 1rem;
+}
+
+
+#page-recoverPassword .left form button {
+    margin-top: 2rem;
+}
+
+@media(max-width: 783px) {
+#page-recoverPassword {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-start;
+}
+
+#page-recoverPassword .left {
+    padding: 3rem 1rem;
+}
+
+#page-recoverPassword .left form h1 {
+    margin-bottom: 2rem;
+}
+
+}

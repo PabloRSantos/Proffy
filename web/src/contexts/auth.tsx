@@ -1,16 +1,24 @@
 import React, { createContext, useState, useEffect, useContext} from "react"
 import api from "../services/api"
 
-interface ISign {
+interface ISignIn {
     email: string,
-    password: string
+    password: string,
+    remember: boolean
+}
+
+interface ISignUp {
+    email: string,
+    password: string,
+    name: string,
+    sobrenome: string
 }
 
 interface IContext {
     signed: boolean,
     user: boolean,
-    SignIn: (loginData: ISign) => void,
-    SignUp: (registerData: ISign) => void,
+    SignIn: (loginData: ISignIn) => void,
+    SignUp: (registerData: ISignUp) => void,
     SignOut: () => void,
 
 }
@@ -36,14 +44,24 @@ export const AuthProvider: React.FC = ({children}) => {
         }
     }, [])
 
-    async function SignIn(loginData: ISign){
+    async function SignIn(loginData: ISignIn){
 
         try {
         const {data} = await api.post('login', loginData)
 
-        localStorage.setItem('@Proffy/token', data.token)
-        setUser(true)
-        api.defaults.headers["authorization"] = `Bearer ${data.token}`
+
+
+        if(data.token) {
+
+            loginData.remember ?
+                localStorage.setItem('@Proffy/token', data.token)
+                : sessionStorage.setItem('@Proffy/token', data.token)
+                
+            setUser(true)
+            api.defaults.headers["authorization"] = `Bearer ${data.token}`
+        }
+
+        return data
 
         } catch (e) {
             console.log(e)
@@ -51,14 +69,18 @@ export const AuthProvider: React.FC = ({children}) => {
 
     }
 
-    async function SignUp(registerData: ISign){
+    async function SignUp(registerData: ISignUp){
 
         try {
             const {data} = await api.post('cadastro', registerData)
 
-            localStorage.setItem('@Proffy/token', data.token)
-            setUser(true)
-            api.defaults.headers["authorization"] = `Bearer ${data.token}`
+            if(data.token) {
+                localStorage.setItem('@Proffy/token', data.token)
+                setUser(true)
+                api.defaults.headers["authorization"] = `Bearer ${data.token}`
+            }
+
+            return data
 
         } catch (e) {
             console.log(e)
@@ -68,6 +90,8 @@ export const AuthProvider: React.FC = ({children}) => {
     async function SignOut(){
         localStorage.removeItem('@Proffy/token')
         setUser(false)
+        api.defaults.headers["authorization"] = ``
+        console.log('deu')
     }
 
 

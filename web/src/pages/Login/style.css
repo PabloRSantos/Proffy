@@ -61,6 +61,11 @@
     margin-right: .5rem;
 }
 
+#page-login .right form .bottom a {
+    text-decoration: none;
+    color: var(--color-text-complement);
+}
+
 #page-login .right footer {
  
     width: 90%;

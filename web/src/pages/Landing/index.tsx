@@ -11,26 +11,50 @@ import PurpleHearIcon from "../../assets/images/icons/purple-heart.svg"
 import api from "../../services/api"
 
 import { FiPower } from "react-icons/fi";
+import { useAuth } from "../../contexts/auth"
+
+interface IUser {
+    name: string,
+    avatar: string
+}
 
 const Landing = () => {
     const [totalConnections, setTotalConnections] = useState(0)
+    const [user, setUser] = useState<IUser>({name: '', avatar: ''})
+
+    const {SignOut} = useAuth()
 
     useEffect(() => {
+        async function loadDatas(){
+          
+          try {
 
-        api.get("connections")
-        .then(response => setTotalConnections(response.data.total))
-        // con
+            const connections = await api.get('connections')
+            setTotalConnections(connections.data.total)
+
+            const user = await api.get('user')
+            setUser(user.data)
+
+          } catch (e) {
+              console.log(e)
+              alert('Erro ao carregar seus dados')
+          }
+        }
+
+        loadDatas()
+
     }, [])
+
 
     return (
         <main id="main-landing">
             <header>
-                <div className="user">
-                    <img src="" alt="Profile"/>
-                    <p>Pablo Rosa</p>
-                </div>
+                <Link to='/profile' className="user">
+                    <img src={`http://localhost:3333/uploads/users/${user.avatar}`} alt="Profile"/>
+                    <p>{user.name}</p>
+                </Link>
 
-                <div id="logOut">
+                <div id="logOut" onClick={() => SignOut()}>
                     <FiPower size={20}/>
                 </div>
 

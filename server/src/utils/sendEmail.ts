@@ -3,11 +3,11 @@ import path from 'path'
 import hbs from 'nodemailer-express-handlebars'
 
     const transporte = nodemailer.createTransport({
-        host: "smtp.gmail.com",
+        host: process.env.HOST_EMAIL,
         port: 587,
         auth: {
-          user: 'pablorsantos15@gmail.com',
-          pass:  'prs100502'// generated ethereal password
+          user: process.env.USER_EMAIL,
+          pass: process.env.PASSWORD_EMAIL
         },
     })
 

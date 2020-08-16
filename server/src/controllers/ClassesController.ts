@@ -103,4 +103,20 @@ export default class ClassesController {
             }
     
     }
+
+    async show (req: Request, res: Response){
+        try {
+
+            const user_id = req.userId
+
+            const classes = await db('classes')
+            .where({user_id})
+            .join('class_schedule', 'class_schedule.class_id', '=', 'classes.id')
+
+            return res.json(classes)
+
+        } catch (e) {
+            return res.status(404).json({error: 'Erro no servidor'})
+        }
+    }
 }

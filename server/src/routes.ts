@@ -14,13 +14,15 @@ const usersController = new UserController()
 routes.post("/connections",conenctionsController.create)
 routes.get("/connections", conenctionsController.index)
 
+routes.get('/user', authMiddleware, usersController.show)
 routes.post('/cadastro', usersController.create)
 routes.post('/login', usersController.login)
-routes.get('/recover/password', usersController.recoverPassword)
-routes.post('/resetPassword', usersController.resetPassword)
+routes.get('/recover/password/:email', usersController.recoverPassword)
+routes.put('/resetPassword', usersController.resetPassword)
 
 routes.post("/classes", authMiddleware, classesControllers.create)
 routes.get("/classes", classesControllers.index)
+routes.get("/class", authMiddleware, classesControllers.show)
 
 
 export default routes
