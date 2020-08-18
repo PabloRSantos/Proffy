@@ -75,7 +75,7 @@ export const AuthProvider: React.FC = ({children}) => {
             const {data} = await api.post('cadastro', registerData)
 
             if(data.token) {
-                localStorage.setItem('@Proffy/token', data.token)
+                sessionStorage.setItem('@Proffy/token', data.token)
                 setUser(true)
                 api.defaults.headers["authorization"] = `Bearer ${data.token}`
             }

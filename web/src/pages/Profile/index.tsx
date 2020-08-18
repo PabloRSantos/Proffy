@@ -17,12 +17,20 @@ export interface IUserState {
   avatar: string
 }
 
+interface IClassesState {
+  cost: number,
+  subject: string
+}
+
+interface ScheduleItem {
+    id?: number,
+    week_day?: number,
+    to?: string,
+    from?: string
+}
+
 const Profile = () => {
-  const [scheduleItems, setScheduleItems] = useState([{
-    week_day: 0, from: "", to:""
-  }])
-  const [subject, setSubject] = useState("")
-  const [cost, setCost] = useState("")
+  const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([{week_day: 8}])
   const [user, setUser] = useState<IUserState>({
     name: '',
     sobrenome: '',
@@ -31,9 +39,8 @@ const Profile = () => {
     bio: '',
     avatar: ''
   })
-  const [classes, setClasses] = useState('')
+  const [classes, setClasses] = useState<IClassesState | undefined>()
   
-
   const history = useHistory()
 
   useEffect(() => {
@@ -41,11 +48,11 @@ const Profile = () => {
       
       try {
         const user = await api.get('user')
-        const classes = await api.get('class')
-
-        console.log(classes)
+        const {data} = await api.get('class')
 
         setUser(user.data)
+        setClasses(data.classes)
+        setScheduleItems(data.scheduleClasses)
 
       } catch (e) {
         console.log(e)
@@ -58,7 +65,8 @@ const Profile = () => {
   }, [])
 
   function addNewScheduleItem(){
-    setScheduleItems([...scheduleItems, {  week_day: 0, from: "", to:""}])
+    const items = [...scheduleItems, {week_day: 0, from: "", to:""}]
+    setScheduleItems(items)
   }
 
   function setScheduleItemValue(position: number, field: string, value: string){
@@ -73,17 +81,16 @@ const Profile = () => {
     setScheduleItems(updatedScheduleItems)
   }
 
-  async function handleCreateClass(e: FormEvent){
+  async function submitForm(e: FormEvent){
       e.preventDefault()
 
       try {
-      await api.post("classes", {
+      const {data} = await api.put("updateInfos", {
         user,
-        subject,
-        cost: Number(cost),
-        schedule: scheduleItems
+        classes,
+        scheduleItems
       })
-      
+        console.log(data)
         alert("Cadastro realizado com sucesso")
         history.push("/")
 
@@ -93,6 +100,8 @@ const Profile = () => {
         
   }
 
+  
+
   return (
     <div id="page-teacher-form" className="container">
     <PageHeader 
@@ -101,7 +110,7 @@ const Profile = () => {
     />
 
     <main>
-      <form onSubmit={handleCreateClass}>
+      <form onSubmit={submitForm}>
         <fieldset>
 
           <legend>Seus dados</legend>
@@ -139,77 +148,86 @@ const Profile = () => {
 
         </fieldset>
 
-        <fieldset>
+          {scheduleItems[0].week_day !== 8 && classes !== undefined && (
+            <>
+             <fieldset>
 
-        <legend>Sobre a aula</legend>
+             <legend>Sobre a aula</legend>
+     
+               <Select
+                name="subject"
+                label="Matéria"
+                value={classes.subject}
+                onChange={e => setClasses({...classes, 'subject': e.target.value})}
+                options={[
+                  {value: "Artes", label: "Artes"},
+                  {value: "Biologia", label: "Biologia"},
+                  {value: "Ciências", label: "Ciências"},
+                  {value: "Educação Física", label: "Educação Física"},
+                  {value: "Física", label: "Física"},
+                  {value: "Geografia", label: "Geografia"},
+                  {value: "História", label: "Hustória"},
+                  {value: "Matemática", label: "Matemática"},
+                  {value: "Português", label: "Português"},
+                  {value: "Quimica", label: "Quimica"}
+                ]}
+               />
+               <Input
+               name="cost"
+               label="Custo da sua hora por aula"
+               value={classes.cost}
+               onChange={e => setClasses({...classes, 'cost': Number(e.target.value)})}/>
+     
+             </fieldset>
 
-          <Select
-           name="subject"
-           label="Matéria"
-           value={subject}
-           onChange={e => setSubject(e.target.value)}
-           options={[
-             {value: "Artes", label: "Artes"},
-             {value: "Biologia", label: "Biologia"},
-             {value: "Ciências", label: "Ciências"},
-             {value: "Educação Física", label: "Educação Física"},
-             {value: "Física", label: "Física"},
-             {value: "Geografia", label: "Geografia"},
-             {value: "História", label: "Hustória"},
-             {value: "Matemática", label: "Matemática"},
-             {value: "Português", label: "Português"},
-             {value: "Quimica", label: "Quimica"}
-           ]}
-          />
-          <Input
-          name="cost"
-          label="Custo da sua hora por aula"
-          value={cost}
-          onChange={e => setCost(e.target.value)}/>
-
-        </fieldset>
-
-        <fieldset>
-          <div className="legend">
-            <p>Horários disponíveis:</p>
-            <button type="button" onClick={addNewScheduleItem}>+ Novo horário</button>
-          </div>
-
-           {scheduleItems.map((scheduleItem, index) => (
-              <div key={scheduleItem.week_day} className="schedule-item">
-              <Select
-              name="week_day"
-              label="Dia da semana"
-              value={scheduleItem.week_day}
-              onChange={e => setScheduleItemValue(index, "week_day", e.target.value)}
-              options={[
-                {value: "0", label: "Domingo"},
-                {value: "1", label: "Segunda-feira"},
-                {value: "2", label: "Terça-feira"},
-                {value: "3 Física", label: "Quarta-feira"},
-                {value: "4", label: "Quinta-feira"},
-                {value: "5", label: "Sexta-feira"},
-                {value: "6", label: "Sábado"},
-              ]}
-              />
-
-              <Input 
-              name="from"
-              label="Das"
-              type="time"
-              value={scheduleItem.from}
-              onChange={e => setScheduleItemValue(index, "from", e.target.value)}/>
-
-              <Input
-              name="to"
-              label="Até"
-              type="time"
-              value={scheduleItem.to}
-              onChange={e => setScheduleItemValue(index, "to", e.target.value)}/>
+              <fieldset>
+              <div className="legend">
+                <p>Horários disponíveis:</p>
+                <button type="button" onClick={addNewScheduleItem}>+ Novo horário</button>
               </div>
-           ))} 
 
-        </fieldset>
+              {scheduleItems.map((scheduleItem: ScheduleItem, index) => (
+                  <div key={index} className="schedule-item">
+                  <Select
+                  name="week_day"
+                  label="Dia da semana"
+                  value={scheduleItem.week_day}
+                  onChange={e => setScheduleItemValue(index, "week_day", e.target.value)}
+                  options={[
+                    {value: "0", label: "Domingo"},
+                    {value: "1", label: "Segunda-feira"},
+                    {value: "2", label: "Terça-feira"},
+                    {value: "3 Física", label: "Quarta-feira"},
+                    {value: "4", label: "Quinta-feira"},
+                    {value: "5", label: "Sexta-feira"},
+                    {value: "6", label: "Sábado"},
+                  ]}
+                  />
+
+                  <Input 
+                  name="from"
+                  label="Das"
+                  type="time"
+                  value={scheduleItem.from}
+                  onChange={e => setScheduleItemValue(index, "from", e.target.value)}/>
+
+                  <Input
+                  name="to"
+                  label="Até"
+                  type="time"
+                  value={scheduleItem.to}
+                  onChange={e => setScheduleItemValue(index, "to", e.target.value)}/>
+                  </div>
+              ))} 
+
+              </fieldset>
+
+              </>
+          )}
+
+       
+
+       
 
         <footer>
           <p>

@@ -1,9 +1,11 @@
 
 #main-landing {
     width: 100vw;
-    min-height: 100vh;
+    min-height: 100%;
+    overflow-y: auto;
     color: var(--color-text-in-primary);
     background-color: var(--color-primary);
+
 }
 
 #main-landing header {

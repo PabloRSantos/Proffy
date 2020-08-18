@@ -19,6 +19,7 @@ routes.post('/cadastro', usersController.create)
 routes.post('/login', usersController.login)
 routes.get('/recover/password/:email', usersController.recoverPassword)
 routes.put('/resetPassword', usersController.resetPassword)
+routes.put('/updateInfos', authMiddleware, usersController.updateInfos)
 
 routes.post("/classes", authMiddleware, classesControllers.create)
 routes.get("/classes", classesControllers.index)

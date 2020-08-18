@@ -15,6 +15,31 @@ interface userResetPassword {
     resetPassword: string
 }
 
+interface userUpdateInfos {
+    name: string,
+    sobrenome: string,
+    bio: string,
+    whatsapp: string,
+    avatar: string,
+}
+
+interface reqBodyUpdateInfos {
+    user: userUpdateInfos,
+    classes: {
+        cost: number,
+        subject: string
+    }
+
+    scheduleItems: [{
+        id: number,
+        week_day: number,
+        from: string,
+        to: string,
+        class_id?: number
+    }]
+
+}
+
 
 export default class UserController {
     async show (req: Request, res:Response){
@@ -34,17 +59,17 @@ export default class UserController {
     }
 
     async create (req: Request, res:Response){
-         let {email, name, password} = req.body
+         let {email, name, sobrenome, password} = req.body
 
          password = await bcrypt.hash(password, 10)
 
          const users = await db('users').first().where('email', email)
 
          if(users) {
-             return res.json({error: 'Email já cadastradp'})
+             return res.json({error: 'Email já cadastrado'})
          }
 
-         const userId = await db("users").insert({email, password, name})
+         const userId = await db("users").insert({email, password, name, sobrenome})
 
          return res.json({
             sucess: "Cadastrado com sucesso", 
@@ -142,41 +167,63 @@ export default class UserController {
 
     async updateInfos (req: Request, res: Response){
         const {
-            week_day,
-            to,
-            from,
-            whatsapp,
-            bio,
-            cost,
-            class_schedule_id
-        } = req.body
+            scheduleItems,
+            user,
+            classes,
+        }: reqBodyUpdateInfos = req.body
+
+        const scheduleCount: any = await db('class_schedule').where('class_id', scheduleItems[0].class_id).count('* as total')
 
         const trx = await db.transaction()
 
         try {
+        
+            if(scheduleItems[0].week_day < 7) {
 
-        if(cost)
-            await trx('classes').where('user_id').update({cost})
+                scheduleItems.forEach(async (item, index) => {
+                        if(index === scheduleCount[0].total){
+                            item.class_id = scheduleItems[0].class_id
+                            await trx('class_schedule').insert({
+                                week_day: item.week_day,
+                                to: Number(item.to),
+                                from: Number(item.from),
+                                class_id: item.class_id
+                            })
+    
+                            return
+                        }
+    
+                        await trx('class_schedule').where('id', item.id).update({
+                            week_day: item.week_day,
+                            to: Number(item.to),
+                            from: Number(item.from)
+                            })
+                        
+                    })
+             }
 
-        const user = [bio, whatsapp]
-        const userId = req.userId
 
-        if(user.length > 0) {
-            const userFiltered = user.filter(info => (
-                info !== null || info !== undefined
-            ))
+            const userId = req.userId
 
-            console.log(userFiltered)
+            if(classes.cost) {
+                await trx('classes').where('id', userId).update({
+                    cost: classes.cost,
+                    subject: classes.subject
+                })
+            }
 
-            await trx('users').where('id', userId).update({userFiltered})
-        }
+            if(user)            
+                await trx('users').where('id', userId).update({
+                    name: user.name,
+                    sobrenome: user.sobrenome,
+                    avatar: user.avatar,
+                    whatsapp: user.whatsapp,
+                    bio: user.bio
+                })
 
-        if(week_day && to && from)
-            await trx('class_schedule').where('id', class_schedule_id).update({week_day, to, from})
+                await trx.commit()
 
-            await trx.commit()
-
-        return res.json({message: 'Informações alteradas com sucesso'})
+            return res.json({message: 'Informações alteradas com sucesso'})
 
         } catch (e){
             await trx.rollback()

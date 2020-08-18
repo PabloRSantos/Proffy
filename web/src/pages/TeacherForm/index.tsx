@@ -66,6 +66,7 @@ const TeacherForm = () => {
 
       api.post("classes", {
         name: user.name,
+        sobrenome: user.sobrenome,
         avatar: user.avatar,
         whatsapp: user.whatsapp,
         bio: user.bio,
@@ -99,9 +100,15 @@ const TeacherForm = () => {
 
             <Input
             name="name"
-            label="Nome completo"
+            label="Nome"
             value={user.name}
             onChange={e => setUser({...user, 'name': e.target.value})}/>
+
+            <Input
+            name="sobrenome"
+            label="Sobrenome"
+            value={user.sobrenome}
+            onChange={e => setUser({...user, 'sobrenome': e.target.value})}/>
 
             <Input
             name="avatar"
