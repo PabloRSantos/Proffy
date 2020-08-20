@@ -65,9 +65,6 @@ const TeacherForm = () => {
       e.preventDefault()
 
       api.post("classes", {
-        name: user.name,
-        sobrenome: user.sobrenome,
-        avatar: user.avatar,
         whatsapp: user.whatsapp,
         bio: user.bio,
         subject,
@@ -90,6 +87,7 @@ const TeacherForm = () => {
     <PageHeader 
     title="Que incrivel que você quer dar aulas"
     description = "O primeiro passo é preencher esse formulário de inscrição"
+    pageName="Dar aulas"
     />
 
     <main>
@@ -98,29 +96,21 @@ const TeacherForm = () => {
 
           <legend>Seus dados</legend>
 
-            <Input
-            name="name"
-            label="Nome"
-            value={user.name}
-            onChange={e => setUser({...user, 'name': e.target.value})}/>
+          <section className="whatsapp_user">
 
-            <Input
-            name="sobrenome"
-            label="Sobrenome"
-            value={user.sobrenome}
-            onChange={e => setUser({...user, 'sobrenome': e.target.value})}/>
+          <div className="user">
+              <img src={`http://localhost:3333/uploads/users/${user.avatar}`} alt=""/>
 
-            <Input
-            name="avatar"
-            label="Avatar"
-            value={user.avatar}
-            onChange={e => setUser({...user, 'avatar': e.target.value})}/>
+              <p>{`${user.name} ${user.sobrenome}`}</p>
+            </div>
 
             <Input
             name="whatsapp"
             label="Whatsapp"
             value={user.whatsapp}
             onChange={e => setUser({...user, 'whatsapp': e.target.value})}/>
+
+          </section>
 
             <Textarea
             name= "bio"

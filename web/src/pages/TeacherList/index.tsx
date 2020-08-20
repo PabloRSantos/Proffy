@@ -1,4 +1,4 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import PageHeader from '../../components/PageHeader';
 
 
@@ -7,6 +7,7 @@ import TeacherItem from '../../components/TeacherItem';
 import Input from '../../components/Input';
 import Select from '../../components/Select';
 import api from '../../services/api';
+import {IoIosArrowDown} from "react-icons/io"
 
 interface Teacher {
   avatar: string,
@@ -22,28 +23,38 @@ const TeacherList = () => {
   const [subject, setSubject] = useState("")
   const [week_day, setWeek_day] = useState("")
   const [time, setTime] = useState("")
-  const [teachers, setTeachers] = useState([])
+  const [teachers, setTeachers] = useState<Teacher[]>([])
+  const [page, setPage] = useState(1)
+  const [classNextPage, setClassNextPage] = useState('')
+  let totalPages = 0
 
-  async function searchTeachers(e: FormEvent){
-    e.preventDefault()
+  useEffect(() => {
+    searchTeachers()
 
-    const {data} = await api.get("classes", {
-      params: {
-        subject,
-        week_day,
-        time
-      }
-    })
+    page >= totalPages && setClassNextPage('hidden')
+  }, [page])
 
-    setTeachers(data)
+  async function searchTeachers(){
+
+     const {data} = await api.get('classes', {
+          params: {
+            week_day,
+            time,
+            subject,
+            page
+          }
+        })
+
+        page === 1 ? setTeachers(data.classes) : setTeachers([...teachers, data])
+        totalPages = data.pages
 
   }
 
 
   return (
     <div id="page-teacher-list" className="container">
-     <PageHeader title="Estes são os proffys disponiveis">
-       <form id="search-teachers" onSubmit={searchTeachers}>
+     <PageHeader title="Estes são os proffys disponiveis" pageName="Estudar">
+       <form id="search-teachers" onSubmit={() => setPage(1)}>
 
         <Select
            name="subject"
@@ -96,15 +107,28 @@ const TeacherList = () => {
 
     <main>
       
-           {teachers.map((teacher: Teacher) => (
-            <TeacherItem key={teacher.id} teacher={teacher}
-            />
+           {teachers.length === 0 ? (
+             <p id='noData'>Nenhum professor encontrado <br/> em sua pesquisa</p>
+           ) : (
+             <>
+              {teachers.map((teacher: Teacher) => (
+                <TeacherItem key={teacher.id} teacher={teacher}
+                />
+                ))}
+
+                <IoIosArrowDown
+                className={`iconArrow ${classNextPage}`}
+                size={50}
+                onClick={() => totalPages > page && setPage(page + 1)}/>
+              </>
+           )}
            
-           ))}
+
+        
     </main>
 
     </div>
   );
 }
 
-export default TeacherList;
+export default TeacherList

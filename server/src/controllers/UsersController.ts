@@ -4,6 +4,7 @@ import generateToken from '../utils/generateToken'
 import bcrypt from 'bcryptjs'
 import crypto from 'crypto'
 import sendEmail from '../utils/sendEmail'
+import convertHourToMinutes from '../utils/convertHourToMinutes'
 
 interface userLogin {
     id: string,
@@ -172,31 +173,34 @@ export default class UserController {
             classes,
         }: reqBodyUpdateInfos = req.body
 
-        const scheduleCount: any = await db('class_schedule').where('class_id', scheduleItems[0].class_id).count('* as total')
-
         const trx = await db.transaction()
 
         try {
+
         
-            if(scheduleItems[0].week_day < 7) {
+            if(scheduleItems) {
+
+                const scheduleCount: any = await trx('class_schedule').where('class_id', scheduleItems[0].class_id).count('* as total')
 
                 scheduleItems.forEach(async (item, index) => {
-                        if(index === scheduleCount[0].total){
+                        if(index >= scheduleCount[0].total){
                             item.class_id = scheduleItems[0].class_id
-                            await trx('class_schedule').insert({
+                                await trx('class_schedule').insert({
                                 week_day: item.week_day,
-                                to: Number(item.to),
-                                from: Number(item.from),
+                                to: convertHourToMinutes(item.to),
+                                from: convertHourToMinutes(item.from),
                                 class_id: item.class_id
                             })
+
+                            console.log('a')
     
                             return
                         }
     
                         await trx('class_schedule').where('id', item.id).update({
                             week_day: item.week_day,
-                            to: Number(item.to),
-                            from: Number(item.from)
+                            to: item.to,
+                            from: item.from
                             })
                         
                     })
@@ -205,7 +209,7 @@ export default class UserController {
 
             const userId = req.userId
 
-            if(classes.cost) {
+            if(classes) {
                 await trx('classes').where('id', userId).update({
                     cost: classes.cost,
                     subject: classes.subject

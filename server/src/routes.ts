@@ -24,6 +24,7 @@ routes.put('/updateInfos', authMiddleware, usersController.updateInfos)
 routes.post("/classes", authMiddleware, classesControllers.create)
 routes.get("/classes", classesControllers.index)
 routes.get("/class", authMiddleware, classesControllers.show)
+routes.delete("/class/:id", authMiddleware, classesControllers.delete)
 
 
 export default routes

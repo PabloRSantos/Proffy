@@ -24,13 +24,13 @@ interface IClassesState {
 
 interface ScheduleItem {
     id?: number,
-    week_day?: number,
-    to?: string,
-    from?: string
+    week_day: number,
+    to: string,
+    from: string
 }
 
 const Profile = () => {
-  const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([{week_day: 8}])
+  const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([])
   const [user, setUser] = useState<IUserState>({
     name: '',
     sobrenome: '',
@@ -39,34 +39,44 @@ const Profile = () => {
     bio: '',
     avatar: ''
   })
-  const [classes, setClasses] = useState<IClassesState | undefined>()
+  const [classes, setClasses] = useState<IClassesState>()
   
   const history = useHistory()
 
   useEffect(() => {
-    async function loadDatas(){
-      
-      try {
-        const user = await api.get('user')
-        const {data} = await api.get('class')
-
-        setUser(user.data)
-        setClasses(data.classes)
-        setScheduleItems(data.scheduleClasses)
-
-      } catch (e) {
-        console.log(e)
-        alert('Erro ao carregar dados, tente novamente')
-      }
-    }
-
     loadDatas()
-
   }, [])
+
+  async function loadDatas(){
+      
+    try {
+      const user = await api.get('user')
+      const {data} = await api.get('class')
+
+      setUser(user.data)
+
+      data.classes && setClasses(data.classes)
+      data.classes && setScheduleItems(data.scheduleClasses)
+
+    } catch (e) {
+      console.log(e)
+      alert('Erro ao carregar dados, tente novamente')
+    }
+  }
 
   function addNewScheduleItem(){
     const items = [...scheduleItems, {week_day: 0, from: "", to:""}]
     setScheduleItems(items)
+  }
+
+  async function deleteSchedule(id?: number){
+
+    if(id){
+      await api.delete(`class/${id}`)
+    }
+
+    loadDatas()
+
   }
 
   function setScheduleItemValue(position: number, field: string, value: string){
@@ -85,12 +95,11 @@ const Profile = () => {
       e.preventDefault()
 
       try {
-      const {data} = await api.put("updateInfos", {
+      await api.put("updateInfos", {
         user,
         classes,
         scheduleItems
       })
-        console.log(data)
         alert("Cadastro realizado com sucesso")
         history.push("/")
 
@@ -107,6 +116,7 @@ const Profile = () => {
     <PageHeader 
     title={`${user.name} ${user.sobrenome}`}
     description = "O primeiro passo é preencher esse formulário de inscrição"
+    pageName='Meu perfil'
     />
 
     <main>
@@ -148,7 +158,7 @@ const Profile = () => {
 
         </fieldset>
 
-          {scheduleItems[0].week_day !== 8 && classes !== undefined && (
+          {scheduleItems.length > 0 && classes !== undefined && (
             <>
              <fieldset>
 
@@ -197,7 +207,7 @@ const Profile = () => {
                     {value: "0", label: "Domingo"},
                     {value: "1", label: "Segunda-feira"},
                     {value: "2", label: "Terça-feira"},
-                    {value: "3 Física", label: "Quarta-feira"},
+                    {value: "3", label: "Quarta-feira"},
                     {value: "4", label: "Quinta-feira"},
                     {value: "5", label: "Sexta-feira"},
                     {value: "6", label: "Sábado"},
@@ -217,6 +227,12 @@ const Profile = () => {
                   type="time"
                   value={scheduleItem.to}
                   onChange={e => setScheduleItemValue(index, "to", e.target.value)}/>
+
+                  <div
+                  onClick={() => deleteSchedule(scheduleItem.id)}
+                  className="timeDelete">
+                    <p>Excluir horário</p>
+                  </div>
                   </div>
               ))} 
 

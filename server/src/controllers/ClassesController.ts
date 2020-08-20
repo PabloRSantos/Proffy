@@ -21,43 +21,51 @@ interface Classes {
 export default class ClassesController {
     async index (req: Request, res: Response){
         try {
-            const filters = req.query
+            const {page, ...filters} = req.query
+            const skip = (Number(page) - 1) * 5
 
-            const subject = filters.subject as string
-            const week_day = filters.week_day as string
-            const time = filters.time as string
+            const totalItems: any = await db('classes').count('* as pages')
 
-            if(!filters.subject || !filters.week_day || !filters.time) {
-                return res.status(400).json({
-                    error: "Missing filters to search classes"
-                })
+            let { pages } = totalItems[0]
+
+            pages = pages / 5
+
+            if(filters.subject && filters.week_day && filters.time) {
+
+                const subject = filters.subject as string
+                const week_day = filters.week_day as string
+                const time = filters.time as string
+
+                if(!filters.subject || !filters.week_day || !filters.time) {
+                    return res.status(400).json({
+                        error: "Missing filters to search classes"
+                    })
+                }
+
+                const timeInMinute = convertHourToMinutes(time)
+
+                const classes = await db('classes')
+                .join('class_schedule', 'class_schedule.class_id', '=', 'classes.id')
+                .join("users", "classes.user_id", "=", "users.id")
+                .where('class_schedule.week_day', Number(week_day))
+                .andWhere('class_schedule.from', '<=', timeInMinute)
+                .andWhere('class_schedule.to', '>', timeInMinute)
+                .andWhere("classes.subject", subject)
+                .select('classes.*', 'users.*')
+                .limit(5)
+                .offset(skip)
+
+                return res.json({classes, pages})
+
             }
 
-            const timeInMinute = convertHourToMinutes(time)
-
-
-            // const classes = await db("classes")
-            // .whereExists(function (){
-            //     this.select("class_schedule.*")
-            //     .from("class_schedule")
-            //     .whereRaw('`class_schedule`.`class_id` = `classes`.`id`')
-            //     .whereRaw('`class_schedule`.`week_day` = ??', [Number(week_day)])
-            //     .whereRaw('`class_schedule`.`from` <= ??', [timeInMinute])
-            //     .whereRaw('`class_schedule`.`to` > ??', [timeInMinute])
-            // })
-            // .where("classes.subject", subject)
-            // .join("users", "classes.user_id", "=", "users.id")
-            // .select("classes.*", "users.*")
-
             const classes = await db('classes')
-            .join('class_schedule', 'class_schedule.class_id', '=', 'classes.id')
             .join("users", "classes.user_id", "=", "users.id")
-            .where('class_schedule.week_day', Number(week_day))
-            .andWhere('class_schedule.from', '<=', timeInMinute)
-            .andWhere('class_schedule.to', '>', timeInMinute)
             .select('classes.*', 'users.*')
+            .limit(5)
+            .offset(skip)
 
-            return res.json(classes)
+            return res.json({classes, pages})
         
         } catch (e) {
             console.log(e)
@@ -69,9 +77,6 @@ export default class ClassesController {
     
     async create(req: Request, res: Response){
         const {
-            name,
-            sobrenome,
-            avatar,
             whatsapp,
             bio,
             subject,
@@ -84,9 +89,6 @@ export default class ClassesController {
             try {        
     
                 const insertedUsersIds = await trx("users").update({
-                    name,
-                    sobrenome,
-                    avatar,
                     whatsapp,
                     bio,
                 })
@@ -136,14 +138,24 @@ export default class ClassesController {
             const classes: Classes = await db('classes')
             .where({user_id}).select('id', 'subject', 'cost').first()
 
+            if(!classes) return res.json({})
+
             const scheduleClasses = await db('class_schedule')
             .where('class_id', classes.id)
 
-            return res.json({classes, scheduleClasses})
+            return res.json({classes, scheduleClasses} || {})
 
         } catch (e) {
             console.log(e)
-            return res.status(404).json({error: 'Erro no servidor'})
+            return res.json({error: 'Erro no servidor'})
         }
+    }
+
+    async delete (req: Request, res: Response){
+        const {id} = req.params
+
+        await db('class_schedule').where({id}).del()
+
+        return res.json({message: 'Excluido com sucesso'})
     }
 }

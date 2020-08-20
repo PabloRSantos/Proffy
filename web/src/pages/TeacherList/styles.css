@@ -38,7 +38,34 @@
 #page-teacher-list main {
     margin: 3.2rem auto;
     width: 90%;
+    display: flex;
+    flex-direction: column;
 }
+
+#page-teacher-list main .iconArrow {
+    align-self: center;
+    margin-top: 1.5rem;
+    cursor: pointer;
+    color: var(--color-secundary);
+    transition: .3s;
+}
+
+#page-teacher-list main .iconArrow:hover {
+    color: var(--color-secundary-dark);
+
+}
+
+#page-teacher-list main .hidden {
+    opacity: .3;
+    cursor: default;
+}
+
+#page-teacher-list main #noData {
+    text-align: center;
+    margin-top: 4rem;
+}
+
+
 
 
 @media(min-width: 700px) {
