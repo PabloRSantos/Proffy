@@ -4,20 +4,15 @@ import Whatsapp from "../../assets/images/icons/whatsapp.svg"
 
 import "./styles.css"
 import api from '../../services/api';
+import TeachersCalendar from '../TeachersCalendar';
+import { ITeacher, IClassSchedule } from '../../pages/TeacherList';
 
-interface PropsTeacher {
-  teacher: {
-    avatar: string,
-    cost: number,
-    id: number,
-    bio: number,
-    name: string,
-    subject: string,
-    whatsapp: string,
-  }
+interface PropsTeacherItem {
+  teacher: ITeacher
+  class_schedule: [IClassSchedule]
 }
 
-const TeacherItem: React.FC<PropsTeacher> = ({teacher}) => {
+const TeacherItem: React.FC<PropsTeacherItem> = ({teacher, class_schedule}) => {
 
   function createConnection(){
     api.post("connections", {
@@ -38,6 +33,12 @@ const TeacherItem: React.FC<PropsTeacher> = ({teacher}) => {
     <p>
        {teacher.bio}
     </p>
+
+     <div className="calendar">
+       {class_schedule.map((class_scheduleItem: IClassSchedule, index) => (
+         <TeachersCalendar key={index} day={Number(class_scheduleItem.day)} hour={class_scheduleItem.hour}/>
+       ))}
+    </div>
 
     <footer>
       <p>

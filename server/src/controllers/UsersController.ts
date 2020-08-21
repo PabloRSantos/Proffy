@@ -27,7 +27,7 @@ interface userUpdateInfos {
 interface reqBodyUpdateInfos {
     user: userUpdateInfos,
     classes: {
-        cost: number,
+        cost: string,
         subject: string
     }
 
@@ -177,7 +177,6 @@ export default class UserController {
 
         try {
 
-        
             if(scheduleItems) {
 
                 const scheduleCount: any = await trx('class_schedule').where('class_id', scheduleItems[0].class_id).count('* as total')
@@ -192,15 +191,13 @@ export default class UserController {
                                 class_id: item.class_id
                             })
 
-                            console.log('a')
-    
                             return
                         }
     
                         await trx('class_schedule').where('id', item.id).update({
                             week_day: item.week_day,
-                            to: item.to,
-                            from: item.from
+                            to: convertHourToMinutes(item.to),
+                            from: convertHourToMinutes(item.from),
                             })
                         
                     })
@@ -210,14 +207,17 @@ export default class UserController {
             const userId = req.userId
 
             if(classes) {
+
+                classes.cost = classes.cost.replace('R$', '')
+
                 await trx('classes').where('id', userId).update({
-                    cost: classes.cost,
+                    cost: Number(classes.cost),
                     subject: classes.subject
                 })
             }
 
             if(user)            
-                await trx('users').where('id', userId).update({
+                await trx('users').first().where('id', userId).update({
                     name: user.name,
                     sobrenome: user.sobrenome,
                     avatar: user.avatar,

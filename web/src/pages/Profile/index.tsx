@@ -18,7 +18,7 @@ export interface IUserState {
 }
 
 interface IClassesState {
-  cost: number,
+  cost: string,
   subject: string
 }
 
@@ -115,7 +115,7 @@ const Profile = () => {
     <div id="page-teacher-form" className="container">
     <PageHeader 
     title={`${user.name} ${user.sobrenome}`}
-    description = "O primeiro passo é preencher esse formulário de inscrição"
+    description = {classes?.subject}
     pageName='Meu perfil'
     />
 
@@ -186,7 +186,7 @@ const Profile = () => {
                name="cost"
                label="Custo da sua hora por aula"
                value={classes.cost}
-               onChange={e => setClasses({...classes, 'cost': Number(e.target.value)})}/>
+               onChange={e => setClasses({...classes, 'cost': e.target.value})}/>
      
              </fieldset>
 

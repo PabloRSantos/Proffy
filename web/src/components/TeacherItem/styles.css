@@ -40,6 +40,12 @@
     line-height: 2.8rem;
 }
 
+.teacher-item .calendar {
+    display: flex;
+    padding: 2rem;
+    justify-content: space-evenly;
+}
+
 .teacher-item footer {
     padding: 3.2rem 2rem;
     background-color: var(--color-box-footer);
