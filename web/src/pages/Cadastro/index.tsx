@@ -1,4 +1,5 @@
 import React, { useState, FormEvent } from 'react';
+import { useHistory } from 'react-router-dom'
 import Background from '../../components/Background';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -12,14 +13,21 @@ const Cadastro: React.FC = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
+    let history = useHistory();
     const {SignUp} = useAuth()
 
     async function submitForm(e: FormEvent){
         e.preventDefault()
 
-        const data = await SignUp({name, sobrenome, email, password})
+        const data: any = await SignUp({name, sobrenome, email, password})
       
-        console.log(data)
+
+        if(!data.error){
+            history.push("/")
+            
+        } else {
+            alert(data.error)
+        }
     }
 
   return (

@@ -25,7 +25,7 @@ export interface IClassSchedule {
 }
 
 interface IClassItem {
-  schedule: [IClassSchedule],
+  scheduleItem: [IClassSchedule],
   classItem: ITeacher
 }
 
@@ -131,7 +131,7 @@ const TeacherList = () => {
                 <TeacherItem
                   key={teacher.classItem.id}
                   teacher={teacher.classItem}
-                  class_schedule={teacher.schedule}
+                  class_schedule={teacher.scheduleItem}
                 />
                 ))}
 

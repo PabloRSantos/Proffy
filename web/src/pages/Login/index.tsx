@@ -3,7 +3,7 @@ import Background from '../../components/Background';
 
 import "./style.css"
 import Input from '../../components/Input';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import Button from '../../components/Button';
 
 import heart from "../../assets/images/icons/purple-heart.svg"
@@ -14,13 +14,19 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('')
   const [remember, setRemember] = useState(false)
 
+  let history = useHistory();
   const {SignIn} = useAuth()
 
   async function submitForm(e: FormEvent){
     e.preventDefault()
-    const data = await SignIn({email, password, remember})
+    const data: any = await SignIn({email, password, remember})
 
-    console.log(data)
+      if(!data.error){
+        history.push('/')
+
+      } else {
+        alert(data.error)
+      }
   }
 
   return (

@@ -7,7 +7,6 @@ export async function up(knex: Knex){
         table.decimal("cost").notNullable()
         
         table.integer("user_id")
-        .unique()
         .notNullable().references("id")
         .inTable("users").onDelete("CASCADE")
         .onUpdate("CASCADE")  //qnd exclui ou altera algo na table users, aq também é 

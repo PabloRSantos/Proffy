@@ -3,20 +3,8 @@ import {Request, Response} from "express"
 import db from "../database/connection"
 import convertHourToMinutes from "../utils/convertHourToMinutes"
 import convertMinutesToHour from "../utils/convertMinutosToHour"
+import { IClasses, IScheduleItems, IScheduleWeekDays } from "../utils/interfaces"
 
-
-interface ScheduleItem {
-    week_day: number;
-    from: string;
-    to: string;
-    class_id: number
-}
-
-interface Classes {
-    subject: string,
-    cost: string,
-    id: number
-}
 
 
 
@@ -25,157 +13,124 @@ export default class ClassesController {
         try {
             const {page, ...filters} = req.query
             const skip = (Number(page) - 1) * 5
-
-            const totalItems: any = await db('classes').count('* as pages')
-
-            let { pages } = totalItems[0]
-
-            pages = pages / 5
+            let totalItems: Array<{pages: Number}> = []
+            let classes: Array<IClasses> = []
+            let schedule: Array<IScheduleItems> = []
 
             if(filters.subject && filters.week_day && filters.time) {
-
                 const subject = filters.subject as string
                 const week_day = filters.week_day as string
                 const time = filters.time as string
 
                 const timeInMinute = convertHourToMinutes(time)
 
-                const classes = await db('classes')
+                classes = await db('classes')
                 .join('class_schedule', 'class_schedule.class_id', '=', 'classes.id')
                 .join("users", "classes.user_id", "=", "users.id")
                 .where('class_schedule.week_day', Number(week_day))
                 .andWhere('class_schedule.from', '<=', timeInMinute)
                 .andWhere('class_schedule.to', '>', timeInMinute)
                 .andWhere("classes.subject", subject)
-                .select('classes.*', 'users.*', 'class_schedule.*')
+                .select('classes.*', 'users.*')
                 .limit(5)
                 .offset(skip)
 
-                var ref = 0
-                var schedule: any = []
-    
-                const classesWithSchedule = classes.map((classItem: ScheduleItem, index: number) => {
-    
-                    const from = convertMinutesToHour(Number(classItem.from)) 
-                    const to = convertMinutesToHour(Number(classItem.to)) 
-    
-                    if(index === classes.length - 1){
-                        schedule.push({
-                            hour: `${from} - ${to}`, day: classItem.week_day
-                        })
-                    }
-    
-                    if(classItem.class_id !== classes[ref].class_id && index !== 0 || index === classes.length - 1) {
-    
-                        const days = schedule.map((scheduleItem: any) => scheduleItem.day)
-    
-                        let cont = 0
-                        
-                        while(schedule.length < 5){
-    
-                            if(days.indexOf(cont) === -1){
-                                schedule.push({
-                                    hour: `-`, day: cont
-                                })
-                            }
-    
-                            cont++
-                        }
-    
-                        schedule.sort((a: any, b: any) => {
-                            return a.day < b.day ? -1 : a.day > b.day ? 1 : 0;
-                        });
-                        
-                        const Array = {
-                            classItem: classes[ref],
-                            schedule
-                        }
-    
-                        schedule = []
-                        ref = index
-    
-                        return Array
-                    }
-    
-                    schedule.push({
-                        hour: `${from} - ${to}`, day: classItem.week_day
-                    })
-    
-                })
-                .filter((classItem: any) => classItem !== undefined)
-    
-    
-                return res.json({pages, classes: classesWithSchedule})
+                schedule = await db('class_schedule')
+                .join('classes', 'classes.id', '=', 'class_schedule.class_id')
+                .where('class_schedule.week_day', Number(week_day))
+                .andWhere('class_schedule.from', '<=', timeInMinute)
+                .andWhere('class_schedule.to', '>', timeInMinute)
+                .andWhere("classes.subject", subject)
+                .select('class_schedule.*')
+                .limit(5)
+                .offset(skip)
 
-            }
+                totalItems = await db('classes')
+                    .join('class_schedule', 'class_schedule.class_id', '=', 'classes.id')
+                    .where('class_schedule.week_day', Number(week_day))
+                    .andWhere('class_schedule.from', '<=', timeInMinute)
+                    .andWhere('class_schedule.to', '>', timeInMinute)
+                    .andWhere("classes.subject", subject)
+                    .count('* as pages')
+
+                var { pages } = totalItems[0]
+                pages = Number(pages) / 5
+
+            } else {
+                classes = await db('classes')
+                .join("users", "classes.user_id", "=", "users.id")
+                .join('class_schedule', 'class_schedule.class_id', '=', 'classes.id')
+                .select('classes.*', 'users.*')
+                .distinct('users.id')
+                .limit(5)
+                .offset(skip)
+
+                schedule = await db('class_schedule')
+                .limit(5)
+                .offset(skip)
 
 
-            let classes: any = await db('classes')
-            .join("users", "classes.user_id", "=", "users.id")
-            .join('class_schedule', 'class_schedule.class_id', '=', 'classes.id')
-            .select('classes.*', 'users.*', 'class_schedule.*')
-            .orderBy('class_schedule.class_id', 'asc')
-            .offset(skip)
+                totalItems = await db('classes').count('* as pages')
 
-            console.log(classes)
+                var { pages } = totalItems[0]
+                pages = Number(pages) / 5
 
-            var ref = 0
-            var schedule: any = []
+            }   
 
-            const classesWithSchedule = classes.map((classItem: ScheduleItem, index: number) => {
 
-                const from = convertMinutesToHour(Number(classItem.from)) 
-                const to = convertMinutesToHour(Number(classItem.to)) 
+           const classesWithSchedule = classes.map((classItem) => {
 
-                if(index === classes.length - 1){
-                    schedule.push({
-                        hour: `${from} - ${to}`, day: classItem.week_day
-                    })
-                }
+                const filteredSchedule = schedule.filter(scheduleItem => scheduleItem.class_id === classItem.id)
 
-                if(classItem.class_id !== classes[ref].class_id && index !== 0 || index === classes.length - 1) {
+                let cont = 0
 
-                    const days = schedule.map((scheduleItem: any) => scheduleItem.day)
+                while(cont < 5){
+                        const filteredScheduleInWhile = filteredSchedule
+                            .filter(scheduleItem => scheduleItem.week_day === cont)
 
-                    let cont = 0
-                    
-                    while(schedule.length < 5){
-
-                        if(days.indexOf(cont) === -1){
-                            schedule.push({
-                                hour: `-`, day: cont
+                        if(filteredScheduleInWhile.length === 0){
+                           filteredSchedule.push({
+                                from: `-`, to: '-', week_day: cont
                             })
                         }
 
                         cont++
-                    }
-
-                    schedule.sort((a: any, b: any) => {
-                        return a.day < b.day ? -1 : a.day > b.day ? 1 : 0;
-                    });
-                    
-                    const Array = {
-                        classItem: classes[ref],
-                        schedule
-                    }
-
-                    schedule = []
-                    ref = index
-
-                    return Array
                 }
 
-                schedule.push({
-                    hour: `${from} - ${to}`, day: classItem.week_day
+                filteredSchedule.sort((a, b) => {
+                    return a.week_day < b.week_day ? -1 : a.week_day > b.week_day ? 1 : 0;
                 })
 
-            })
-            .filter((classItem: any) => classItem !== undefined)
+                    let calendar: Array<IScheduleWeekDays> = []
 
+                    calendar = filteredSchedule.map(scheduleItem => {
+                        
+                        if(scheduleItem.from === '-'){
+                           return {
+                               day: scheduleItem.week_day,
+                               hour: '-'
+                           }
+                        }
+
+                        const to = convertMinutesToHour(Number(scheduleItem.to))
+                        const from = convertMinutesToHour(Number(scheduleItem.from))
+
+                        return {
+                            day: scheduleItem.week_day,
+                            hour: `${from} - ${to}`
+                        }
+                     })
+
+
+                return {
+                    classItem,
+                    scheduleItem: calendar
+                }
+        })
 
             return res.json({pages, classes: classesWithSchedule})
         
-        } catch (e) {
+    } catch (e) {
             console.log(e)
 
             return res.status(404)
@@ -196,22 +151,22 @@ export default class ClassesController {
     
             try {        
     
-                const insertedUsersIds = await trx("users").where('id', req.userId).update({
+                await trx("users").where('id', req.userId).update({
                     whatsapp,
                     bio,
                 })
 
-                const user_id = insertedUsersIds
+                const user_id = req.userId
     
                 const insertedClassesIds = await trx("classes").insert({
                     subject,
                     cost,
                     user_id
                 })
-    
+
                 const class_id = insertedClassesIds[0]
     
-                const classSchedule = schedule.map((scheduleItem: ScheduleItem) => {
+                const classSchedule = schedule.map((scheduleItem: IScheduleItems) => {
                     return {
                         class_id,
                         week_day: scheduleItem.week_day,
@@ -243,7 +198,7 @@ export default class ClassesController {
 
             const user_id = req.userId
 
-            const classes: Classes = await db('classes')
+            const classes: IClasses = await db('classes')
             .where({user_id}).select('id', 'subject', 'cost').first()
 
             if(!classes) return res.json({})
@@ -253,7 +208,7 @@ export default class ClassesController {
             const scheduleClasses = await db('class_schedule')
             .where('class_id', classes.id)
 
-            scheduleClasses.forEach((scheduleItem: ScheduleItem) => {
+            scheduleClasses.forEach((scheduleItem: IScheduleItems) => {
                 scheduleItem.to = convertMinutesToHour(Number(scheduleItem.to))
                 scheduleItem.from = convertMinutesToHour(Number(scheduleItem.from))
             })

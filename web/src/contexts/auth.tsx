@@ -36,7 +36,9 @@ export const AuthProvider: React.FC = ({children}) => {
 
     useEffect(() => {
         
-        const token = localStorage.getItem('@Proffy/token')
+        const token = localStorage.getItem('@Proffy/token') ||
+            sessionStorage.getItem('@Proffy/token')
+
 
         if(token){
             setUser(true)

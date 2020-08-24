@@ -43,6 +43,45 @@
 
 }
 
+.page-header .header-content .profilePic {
+    position: relative;
+}
+
+.page-header .header-content .profilePic img{
+    width: 9rem;
+    height: 9rem;
+    border-radius: 50%;
+}
+
+.page-header .header-content .profilePic .changePic {
+    background-color: var(--color-secundary);
+    border-radius: 50%;
+    width: 3.5rem;
+    height: 3.5rem;
+    position: absolute;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    bottom: .4rem;
+    right: -.3rem;
+
+}
+
+.page-header .header-content .profilePic .changePic img {
+    width: 60%;
+    object-fit: contain;
+}
+
+.page-header .header-content .profilePic .changePic label {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    position: absolute;
+    cursor: pointer;
+}
+
 .page-header .header-content strong {
     font: 700 3.6rem Archivo;
     line-height: 4.2rem;

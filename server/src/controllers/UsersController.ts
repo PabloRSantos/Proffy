@@ -1,45 +1,17 @@
 import {Request, Response} from 'express'
-import db from '../database/connection'
-import generateToken from '../utils/generateToken'
 import bcrypt from 'bcryptjs'
 import crypto from 'crypto'
+import path from 'path'
+import fs from 'fs'
+
+import db from '../database/connection'
+import generateToken from '../utils/generateToken'
+
 import sendEmail from '../utils/sendEmail'
 import convertHourToMinutes from '../utils/convertHourToMinutes'
+import { IClasses, IScheduleItems, IUsers, reqBodyUpdateInfos } from '../utils/interfaces'
 
-interface userLogin {
-    id: string,
-    password: string,
-}
 
-interface userResetPassword {
-    resetPasswordTime: Date,
-    resetPassword: string
-}
-
-interface userUpdateInfos {
-    name: string,
-    sobrenome: string,
-    bio: string,
-    whatsapp: string,
-    avatar: string,
-}
-
-interface reqBodyUpdateInfos {
-    user: userUpdateInfos,
-    classes: {
-        cost: string,
-        subject: string
-    }
-
-    scheduleItems: [{
-        id: number,
-        week_day: number,
-        from: string,
-        to: string,
-        class_id?: number
-    }]
-
-}
 
 
 export default class UserController {
@@ -82,7 +54,7 @@ export default class UserController {
     async login (req: Request, res:Response){
         let {email, password} = req.body
 
-        const user: userLogin = await db('users').where("email", email).select('id', 'password').first()
+        const user: IUsers = await db('users').where("email", email).select('id', 'password').first()
 
         if(!user){
             return res.json({error: 'Usuário não encontrado'})
@@ -139,7 +111,7 @@ export default class UserController {
 
         try {
 
-        const user: userResetPassword = await db('users').where('resetPassword', token).select('resetPasswordTime', 'resetPassword').first()
+        const user: IUsers = await db('users').where('resetPassword', token).select('resetPasswordTime', 'resetPassword').first()
 
         if(!user)
             return res.json({error: 'Erro ao achar usuário, tente novamente'})
@@ -236,5 +208,36 @@ export default class UserController {
 
             return res.json({error: 'Erro ao alterar informações'})
         }
+    }
+
+    async updateProfilePic (req: Request, res: Response){
+        try {
+
+                const id = req.userId
+                const user = await db("users").select("avatar").where({id}).first()
+
+                if(user.avatar !== 'default.png'){
+                    fs.unlink(path.resolve(__dirname, "..", "..", "uploads", "users", user.avatar), () => {
+                        console.log('old pic unlinked')
+                    })
+                }
+
+                await db("users").where({id}).first().update("avatar", req.file.filename)
+
+                return res.json({
+                    message: "Salvo com sucesso",
+                    file: req.file.filename
+                })
+
+           } catch (e) {
+
+                console.log(e)
+
+                fs.unlink(path.resolve(__dirname, "..", "..", "uploads", "users", req.file.filename), () => {
+                    console.log('pic upload canceled')
+                    })
+
+                return res.status(401).json({message: 'Erro ao alterar foto de perfil'})
+           }
     }
 }

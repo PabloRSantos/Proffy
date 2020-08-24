@@ -117,6 +117,7 @@ const Profile = () => {
     title={`${user.name} ${user.sobrenome}`}
     description = {classes?.subject}
     pageName='Meu perfil'
+    profilePic={user.avatar}
     />
 
     <main>
@@ -137,12 +138,6 @@ const Profile = () => {
             label="Sobrenome"
             value={user.sobrenome}
             onChange={e => setUser({...user, 'sobrenome': e.target.value})}/>
-
-            <Input
-            name="avatar"
-            label="Avatar"
-            value={user.avatar}
-            onChange={e => setUser({...user, 'avatar': e.target.value})}/>
 
             <Input
             name="whatsapp"
@@ -176,7 +171,7 @@ const Profile = () => {
                   {value: "Educação Física", label: "Educação Física"},
                   {value: "Física", label: "Física"},
                   {value: "Geografia", label: "Geografia"},
-                  {value: "História", label: "Hustória"},
+                  {value: "História", label: "História"},
                   {value: "Matemática", label: "Matemática"},
                   {value: "Português", label: "Português"},
                   {value: "Quimica", label: "Quimica"}
@@ -204,13 +199,11 @@ const Profile = () => {
                   value={scheduleItem.week_day}
                   onChange={e => setScheduleItemValue(index, "week_day", e.target.value)}
                   options={[
-                    {value: "0", label: "Domingo"},
-                    {value: "1", label: "Segunda-feira"},
-                    {value: "2", label: "Terça-feira"},
-                    {value: "3", label: "Quarta-feira"},
-                    {value: "4", label: "Quinta-feira"},
-                    {value: "5", label: "Sexta-feira"},
-                    {value: "6", label: "Sábado"},
+                    {value: "0", label: "Segunda-feira"},
+                    {value: "1", label: "Terça-feira"},
+                    {value: "2", label: "Quarta-feira"},
+                    {value: "3", label: "Quinta-feira"},
+                    {value: "4", label: "Sexta-feira"},
                   ]}
                   />
 
