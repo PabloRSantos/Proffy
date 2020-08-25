@@ -26,13 +26,19 @@ import api from '../../services/api';
 
 
  export interface Teacher {
-    id: number
-    avatar: string
-    bio: string
-    cost: number
-    name: string
-    subject: string
-    whatsapp: string
+    classItem: {
+        id: number
+        avatar: string
+        bio: string
+        cost: number
+        name: string
+        subject: string
+        whatsapp: string
+    },
+    schedule?: {
+        day: number,
+        hour: string,
+    }
   }
 
 interface TeacherItemProps {
@@ -46,9 +52,9 @@ const TeacherItem: React.FC<TeacherItemProps> = ({teacher, favorited}) => {
 
     function handleToWhatsapp(){
         api.post('connections', {
-            user_id: teacher.id
+            user_id: teacher.classItem.id
         })
-        Linking.openURL(`whatsapp://send?phone=${teacher.whatsapp}`)
+        Linking.openURL(`whatsapp://send?phone=${teacher.classItem.whatsapp}`)
     }
 
     async function handleToggleFavorited(){
@@ -64,7 +70,7 @@ const TeacherItem: React.FC<TeacherItemProps> = ({teacher, favorited}) => {
 
             const favoritedIndex = favoritesArray
             .findIndex((teacherItem: Teacher) =>
-            teacherItem.id === teacher.id) //se for true retorna o id
+            teacherItem.classItem.id === teacher.classItem.id) //se for true retorna o id
 
             favoritesArray.splice(favoritedIndex, 1)
             setIsFavorited(false)
@@ -83,21 +89,21 @@ const TeacherItem: React.FC<TeacherItemProps> = ({teacher, favorited}) => {
   return (
       <Container>
           <Profile>
-              <Avatar source={{uri: teacher.avatar}}/>
+              <Avatar source={{uri: `http://10.0.0.104:3333/uploads/users/${teacher.classItem.avatar}`}}/>
               <ProfileInfo>
-                  <Nome>{teacher.name}</Nome>
-                  <Subject>{teacher.subject}</Subject>
+                  <Nome>{teacher.classItem.name}</Nome>
+                  <Subject>{teacher.classItem.subject}</Subject>
               </ProfileInfo>
           </Profile>
 
           <Bio>
-            {teacher.bio}
+            {teacher.classItem.bio}
           </Bio>
 
           <Footer>
               <Price>
                   Preço/hora {'  '}
-                  <PriceValue>R$ {teacher.cost}</PriceValue>
+                  <PriceValue>R$ {teacher.classItem.cost}</PriceValue>
               </Price>
 
               <ButtonsContainer>

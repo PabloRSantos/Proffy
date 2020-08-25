@@ -39,7 +39,7 @@ const Favorites: React.FC = () => {
      
       {favorites.map((teacher: Teacher) => (
         <TeacherItem 
-        key={teacher.id}
+        key={teacher.classItem.id}
         teacher={teacher}
         favorited
         />

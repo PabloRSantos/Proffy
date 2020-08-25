@@ -1,4 +1,6 @@
-import React, { useState} from 'react';
+import React, { useState, useCallback} from 'react';
+import {useFocusEffect} from '@react-navigation/native'
+
 import AsyncStorage from '@react-native-community/async-storage'
 import {Feather} from '@expo/vector-icons'
 
@@ -24,15 +26,23 @@ const TeacherList: React.FC = () => {
   const [subject, setSubject] = useState('')
   const [week_day, setWeek_day] = useState('')
   const [time, setTime] = useState('')
-  const [teachers, setTeachers] = useState([])
+  const [teachers, setTeachers] = useState<Teacher[]>([])
   const [favorites, setFavorites] = useState<number[]>([])
+
+ 
+
+  useFocusEffect(
+    useCallback(() => {
+      loadDatas()
+    }, [])
+  )
 
   function loadFavorites(){
     AsyncStorage.getItem(`favorites`)
     .then(response => {
       if(response) {
        const favoritedTeachers = JSON.parse(response)
-       const favoritedTeachersIds = favoritedTeachers.map((teacher: Teacher) => teacher.id)
+       const favoritedTeachersIds = favoritedTeachers.map((teacher: Teacher) => teacher.classItem.id)
 
        setFavorites(favoritedTeachersIds)
       }
@@ -43,18 +53,19 @@ const TeacherList: React.FC = () => {
     setFilterVisible(!filterVisible)
   }
 
-  async function handleFiltersSubmit(){
+  async function loadDatas(){
     loadFavorites()
 
     const {data} = await api.get(`classes`, {
       params: {
       time,
       subject,
-      week_day
+      week_day,
+      page: 1
     }})
 
     setFilterVisible(false)
-    setTeachers(data)
+    setTeachers(data.classes)
 
   }
 
@@ -96,7 +107,7 @@ const TeacherList: React.FC = () => {
               </InputBlock>
             </InputGroup>
 
-            <SubmitButton onPress={handleFiltersSubmit}>
+            <SubmitButton onPress={loadDatas}>
               <SubmitText>Filtrar</SubmitText>
             </SubmitButton>
             
@@ -111,11 +122,11 @@ const TeacherList: React.FC = () => {
       }}
       >
        
-       {teachers.map((teacher: Teacher) => 
+       {teachers && teachers.map(teacher => 
          <TeacherItem
-           key={teacher.id}
+           key={teacher.classItem.id}
            teacher={teacher}
-           favorited={favorites.includes(teacher.id)}
+           favorited={favorites.includes(teacher.classItem.id)}
          />
        )}
 
