@@ -3,6 +3,7 @@ import {NavigationContainer} from '@react-navigation/native'
 import {createStackNavigator} from '@react-navigation/stack'
 import Cadastro from '../pages/Cadastro'
 import Login from '../pages/Login'
+import ForgotPassword from '../pages/ForgotPassword'
 
 
 
@@ -14,6 +15,7 @@ function AuthStack(){
             <Navigator screenOptions={{ headerShown: false }}>
                 <Screen name="Login" component={Login}/>
                 <Screen name="Cadastro" component={Cadastro}/>
+                <Screen name="ForgotPassword" component={ForgotPassword}/>
             </Navigator>
         </NavigationContainer>
     )

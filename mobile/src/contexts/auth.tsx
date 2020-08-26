@@ -3,7 +3,7 @@ import api from "../services/api"
 import AsyncStorage from '@react-native-community/async-storage'
 
 
-interface ISignIn {
+export interface ISignIn {
     email: string,
     password: string
 }

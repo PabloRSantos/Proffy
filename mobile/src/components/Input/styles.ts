@@ -1,5 +1,5 @@
 import styled, {css} from 'styled-components/native';
-import colors from '../../assets/GlobalStyle.json'
+import colors from '../../assets/styles/colors'
 
 interface InputPropsStyle {
    classInput: string,
@@ -25,6 +25,10 @@ export const InputCustomized = styled.TextInput<InputPropsStyle>`
   ${props => props.classInput === 'last' && css`
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
+  `}
+
+  ${props => props.classInput === 'unique' && css`
+    border-radius: 8px
   `}
 
 `

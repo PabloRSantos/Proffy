@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Container,
 BackgroundImage,
@@ -14,15 +14,28 @@ InfosBottom,
 RememberMe,
 Check,
 Text,
-ForgotPassword,
-Submit,
-TextButton } from './styles';
+ForgotPassword} from './styles';
 
 import Background from '../../assets/images/give-classes-background.png'
 import LogoProffy from '../../assets/images/logo.png'
 import Input from '../../components/Input';
+import { useNavigation } from '@react-navigation/native';
+import Button from '../../components/Button';
+import colors from '../../assets/styles/colors';
+import { useAuth, ISignIn } from '../../contexts/auth';
+
 
 const Login: React.FC = () => {
+  const [formData, setFormData] = useState<ISignIn>({email: '', password: ''})
+  const navigation = useNavigation()
+  const {SignIn} = useAuth()
+
+  async function handleSubmit(){
+   const data = await SignIn(formData)
+
+   console.log(data)
+  }
+
   return (
     <Container>
       <BackgroundImage resizeMode="cover" source={Background}>
@@ -41,14 +54,24 @@ const Login: React.FC = () => {
             Fazer Login
           </Title>
 
-          <Span>
+          <Span onPress={() => navigation.navigate('Cadastro')}>
             Criar uma conta
           </Span>
         </InfosTop>
 
         <Form>
-          <Input classInput={'first'}/>
-          <Input classInput={'last'}/>
+          <Input
+          classInput={'first'} 
+          placeholder='E-mail'
+          onChangeText={text => setFormData({...formData, email: text})}
+          />
+
+          <Input
+          classInput={'last'}
+          placeholder='Senha'
+          onChangeText={text => setFormData({...formData, password: text})}
+          />
+
         </Form>
 
         <InfosBottom>
@@ -61,16 +84,12 @@ const Login: React.FC = () => {
             </Text>
           </RememberMe>
 
-          <ForgotPassword>
+          <ForgotPassword onPress={() => navigation.navigate('ForgotPassword')}>
             Esqueci minha senha
           </ForgotPassword>
         </InfosBottom>
 
-        <Submit>
-          <TextButton>
-            Entrar
-          </TextButton>
-        </Submit>
+        <Button text="Entrar" color={colors.secundary} onPress={handleSubmit}/>
 
 
       </FormContainer>

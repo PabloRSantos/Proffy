@@ -5,6 +5,7 @@ import {Archivo_400Regular, Archivo_700Bold, useFonts} from '@expo-google-fonts/
 import {Poppins_400Regular, Poppins_600SemiBold} from '@expo-google-fonts/poppins'
 import Routes from './src/routes';
 import {AuthProvider} from './src/contexts/auth'
+import colors from './src/assets/styles/colors';
 
 export default function App() {
 
@@ -20,7 +21,7 @@ export default function App() {
    } else {
       return (
         <AuthProvider>
-          <StatusBar style="light"/>
+          <StatusBar style="light" backgroundColor={colors.primary}/>
           <Routes />
         </AuthProvider>
       );
