@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Keyboard } from 'react-native';
 
 import { Container,
 BackgroundImage,
@@ -23,30 +24,68 @@ import { useNavigation } from '@react-navigation/native';
 import Button from '../../components/Button';
 import colors from '../../assets/styles/colors';
 import { useAuth, ISignIn } from '../../contexts/auth';
+import { Feather } from '@expo/vector-icons'; 
+
 
 
 const Login: React.FC = () => {
-  const [formData, setFormData] = useState<ISignIn>({email: '', password: ''})
+  const [formData, setFormData] = useState<ISignIn>({email: '', password: '', remember: false})
+  const [checkActive, setCheckActive] = useState(false)
   const navigation = useNavigation()
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const {SignIn} = useAuth()
+
+ useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true); // or some other action
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false); // or some other action
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+
+  function handleCheck(){
+   
+    if(checkActive){
+      setCheckActive(false)
+      setFormData({...formData, 'remember': false})
+    } else {
+      setCheckActive(true)
+      setFormData({...formData, 'remember': true})
+    }
+  }
 
   async function handleSubmit(){
    const data = await SignIn(formData)
 
    console.log(data)
+
   }
 
   return (
     <Container>
-      <BackgroundImage resizeMode="cover" source={Background}>
+      {!isKeyboardVisible && (
+        <BackgroundImage resizeMode="cover" source={Background}>
 
-      <TextsTop>
-          <Logo source={LogoProffy} resizeMode='contain' />
-          <SpanLogo>
-            Sua plataforma de {'\n'}estudos online
-          </SpanLogo>
-      </TextsTop>
-      </BackgroundImage>
+        <TextsTop>
+            <Logo source={LogoProffy} resizeMode='contain' />
+            <SpanLogo>
+              Sua plataforma de {'\n'}estudos online
+            </SpanLogo>
+        </TextsTop>
+        </BackgroundImage>
+      )}
 
       <FormContainer>
         <InfosTop>
@@ -76,8 +115,10 @@ const Login: React.FC = () => {
 
         <InfosBottom>
           <RememberMe>
-            <Check>
-
+            <Check
+              active={checkActive}
+              onPress={handleCheck}>
+             <Feather name="check" size={13} color="white" />
             </Check>
             <Text>
               Lembrar-me

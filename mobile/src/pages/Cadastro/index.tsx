@@ -19,7 +19,7 @@ import colors from '../../assets/styles/colors';
 import { useNavigation } from '@react-navigation/native';
 import { BorderlessButton } from 'react-native-gesture-handler';
 import { useAuth } from '../../contexts/auth';
-import { BackHandler } from 'react-native';
+import { BackHandler, Keyboard } from 'react-native';
 
 interface ICadastroForm {
   Nome: string,
@@ -34,10 +34,21 @@ const Cadastro: React.FC = () => {
   const [placeHolder, setPlaceHolder] = useState(['Nome', 'Sobrenome'])
   const [textButton, setTextButton] = useState('Próximo')
   const [page, setPage] = useState(1)
-  const [titleVisible, setTitleVisible] = useState(true)
   const [formData, setFormData] = useState<ICadastroForm>({Nome: '', Sobrenome: '', Email: '', Senha: ''})
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const {goBack} = useNavigation()
   const {SignUp} = useAuth()
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true));
+
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide',() => setKeyboardVisible(false))
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
 
   
     BackHandler.addEventListener('hardwareBackPress', () => {
@@ -82,30 +93,31 @@ const Cadastro: React.FC = () => {
 
   return (
     <Container>
-      <TopScreen>
+      {!isKeyboardVisible && (
+        <TopScreen>
 
-        <Header>
-          <BorderlessButton onPress={() => page === 1 ? goBack() : handlePage()}>
-            <BackIcon/>
-          </BorderlessButton>
-          <ProgressStatus>
-            <ProgressItem active={page === 1 ? true : false}/>
-            <ProgressItem active={page === 2 ? true : false}/>
-          </ProgressStatus>
-        </Header>
+          <Header>
+            <BorderlessButton onPress={() => page === 1 ? goBack() : handlePage()}>
+              <BackIcon/>
+            </BorderlessButton>
+            <ProgressStatus>
+              <ProgressItem active={page === 1 ? true : false}/>
+              <ProgressItem active={page === 2 ? true : false}/>
+            </ProgressStatus>
+          </Header>
 
-      {titleVisible && (
-        <InfosTop>
-          <TitleTop>
-            Crie sua{'\n'}conta gratuíta
-          </TitleTop>
-          <Span>
-            Basta preencher esses dados{'\n'}e você estará conosco.
-          </Span>
-       </InfosTop>
+          <InfosTop>
+            <TitleTop>
+              Crie sua{'\n'}conta gratuíta
+            </TitleTop>
+            <Span>
+              Basta preencher esses dados{'\n'}e você estará conosco.
+            </Span>
+        </InfosTop>
+
+        </TopScreen>
       )}
 
-      </TopScreen>
 
       <BottomScreen>
         <TitleForm>
@@ -120,8 +132,6 @@ const Cadastro: React.FC = () => {
           <Input
           classInput={'last'}
           placeholder={placeHolder[1]}
-          onFocus={() => setTitleVisible(false)}
-          onBlur={() => setTitleVisible(true)}
           onChangeText={text => setFormData({...formData, [placeHolder[1]]: text})}/>
 
         </Form>

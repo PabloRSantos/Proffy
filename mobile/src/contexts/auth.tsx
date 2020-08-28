@@ -5,7 +5,8 @@ import AsyncStorage from '@react-native-community/async-storage'
 
 export interface ISignIn {
     email: string,
-    password: string
+    password: string,
+    remember: boolean
 }
 
 interface ISignUp {
@@ -40,7 +41,10 @@ export const AuthProvider: React.FC = ({children}) => {
         async function loadDatas(){
             const token = await AsyncStorage.getItem('@Proffy/token')
 
+            console.log(token)
+
             if(token){
+                console.log('a')
                 setUser(true)
                 api.defaults.headers['authorization'] = `Bearer ${token}`
             }
@@ -58,7 +62,9 @@ export const AuthProvider: React.FC = ({children}) => {
 
         if(data.token) {
 
-            await AsyncStorage.setItem('@Proffy/token', data.token)
+            console.log(loginData.remember)
+
+            loginData.remember && await AsyncStorage.setItem('@Proffy/token', data.token)
             setUser(true)
             api.defaults.headers["authorization"] = `Bearer ${data.token}`
         }

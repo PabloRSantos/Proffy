@@ -9,7 +9,7 @@ import generateToken from '../utils/generateToken'
 
 import sendEmail from '../utils/sendEmail'
 import convertHourToMinutes from '../utils/convertHourToMinutes'
-import { IClasses, IScheduleItems, IUsers, reqBodyUpdateInfos } from '../utils/interfaces'
+import {IUsers, reqBodyUpdateInfos } from '../utils/interfaces'
 
 
 

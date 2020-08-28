@@ -3,6 +3,12 @@ import {useNavigation} from '@react-navigation/native'
 
 
 import { Container,
+     TopScreen,
+     User,
+     ProfileImage,
+     NameUser,
+     LogOut,
+     OffIcon,
      Imagem,
      Texto,
      TextoBold,
@@ -19,16 +25,38 @@ import studyIcon from "../../assets/images/icons/study.png"
 import giveClassesIcon from "../../assets/images/icons/give-classes.png"
 import heartIcon from "../../assets/images/icons/heart.png"
 import api from '../../services/api';
+import { useAuth } from '../../contexts/auth';
+
+interface IUser {
+    id?: number,
+    name: string,
+    sobrenome: string,
+    password?: string,
+    email?: string,
+    avatar: string,
+    whatsapp?: string,
+    bio?: string,
+    resetPassword?: string,
+    resetPasswordTime?: Date
+}
 
 const Landing: React.FC = () => {
     const navigation = useNavigation()
+    const {SignOut} = useAuth()
     
     const [totalConnections, setTotalConnections] = useState(0)
+    const [user, setUser] = useState<IUser>({avatar: '', name: '', sobrenome: ''})
 
     useEffect(() => {
-        
-        api.get('connections')
-        .then(response => setTotalConnections(response.data.total))
+        async function loadDatas(){
+          const connectionsResponse = await api.get('connections')
+            setTotalConnections(connectionsResponse.data.total)
+
+          const userResponse = await api.get('user')
+            setUser(userResponse.data) 
+        }
+
+        loadDatas()
 
     }, [])
 
@@ -44,6 +72,17 @@ const Landing: React.FC = () => {
 
   return (
      <Container>
+         <TopScreen>
+             <User>
+                 <ProfileImage source={{uri: `http://10.0.0.106:3333/uploads/users/${user.avatar}`}}/>
+                 <NameUser>{user.name} {user.sobrenome}</NameUser>
+             </User>
+
+             <LogOut onPress={() => SignOut()}>
+                 <OffIcon />
+             </LogOut>
+         </TopScreen>
+
          <Imagem
          style={{resizeMode: "contain"}}
          source={LandingImg}/>

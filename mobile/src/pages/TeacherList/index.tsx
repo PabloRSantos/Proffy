@@ -72,6 +72,7 @@ const TeacherList: React.FC = () => {
   return (
     <Container>
        <PageHeader title="Proffys disponiveis"
+        pageName='Estudar'
         headerRight={(
           <BorderButton onPress={handleFiltersVisible}>
               <Feather name="filter" size={20} color="#fff"/>

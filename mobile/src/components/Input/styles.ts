@@ -7,14 +7,21 @@ interface InputPropsStyle {
 
 export const Container = styled.View`
   min-width: 100%;
-  height: 65px;
+`
+
+export const Label = styled.Text`
+  margin: 10px 0 5px;
+
+  font-size: 13px;
+  color: ${colors["text-complement"]};
+  font-family: 'Poppins_400Regular';
 `
 
 export const InputCustomized = styled.TextInput<InputPropsStyle>`
   
   background-color: ${colors["box-footer"]};
   border: .5px solid ${colors["line-in-white"]};
-  height: 100%;
+  min-height: 60px;
   padding: 2px 20px;
 
   ${props => props.classInput === 'first' && css`

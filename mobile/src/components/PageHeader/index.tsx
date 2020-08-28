@@ -1,4 +1,6 @@
 import React, { ReactNode } from 'react';
+import { StatusBar } from 'expo-status-bar';
+
 
 import { Container,
      TopBar,
@@ -6,20 +8,24 @@ import { Container,
      ImageButton,
      Logo,
      Title,
-     Header} from './styles';
+     Header,
+    PageName,
+    Bottom} from './styles';
 
 import backIcon from "../../assets/images/icons/back.png"
 import logoImg from "../../assets/images/logo.png"
 import { useNavigation } from '@react-navigation/native';
+import colors from '../../assets/styles/colors';
 
 
 interface PageHeaderProps {
-    title: string;
+    title?: string;
     headerRight?: ReactNode; //component react
+    pageName: string;
 }
 
 
-const PageHeader: React.FC<PageHeaderProps> = ({title, children, headerRight}) => {
+const PageHeader: React.FC<PageHeaderProps> = ({title, children, headerRight, pageName}) => {
 
     const {navigate} = useNavigation()
 
@@ -28,6 +34,8 @@ const PageHeader: React.FC<PageHeaderProps> = ({title, children, headerRight}) =
     }
 
   return (
+      <>
+          <StatusBar style="light" backgroundColor={colors["primary-dark"]}/>
   <Container>
 
     <TopBar>
@@ -35,19 +43,26 @@ const PageHeader: React.FC<PageHeaderProps> = ({title, children, headerRight}) =
             <ImageButton source={backIcon} resizeMode="contain" />
         </Button>
 
+        <PageName>{pageName}</PageName>
+
         <Logo source={logoImg} resizeMode="contain" />
     </TopBar>
 
+    <Bottom>
 
-    <Header>
-         <Title>{title}</Title>
-        {headerRight}
-    </Header>
-    
 
-    {children}
+        <Header>
+            {title && <Title>{title}</Title>}
+            {headerRight}
+        </Header>
+        
+
+        {children}
+    </Bottom>
+
 
   </Container>
+  </>
   )
 }
 

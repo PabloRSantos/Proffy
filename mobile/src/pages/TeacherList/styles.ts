@@ -7,7 +7,7 @@ export const Container = styled.View`
 `;
 
 export const Scroll = styled.ScrollView`
-  margin-top: -40px;
+  margin-top: -30px;
 `
 
 export const BorderButton = styled(BorderlessButton)``

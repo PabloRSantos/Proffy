@@ -2,8 +2,13 @@ import styled from 'styled-components/native';
 import colors from '../../assets/styles/colors'
 import {Dimensions} from 'react-native'
 import statusBarHeight from '../../assets/styles/statusBarHeight';
+import { BorderlessButton } from 'react-native-gesture-handler';
 
-const {width, height} = Dimensions.get('window')
+const {width} = Dimensions.get('window')
+
+interface CheckBox {
+    active: boolean;
+}
 
 
 export const Container = styled.KeyboardAvoidingView.attrs({
@@ -77,9 +82,19 @@ export const InfosBottom = styled.View`
     margin-bottom: 5%; 
 `
 export const RememberMe = styled.View`
-
+    flex-direction: row;
+    align-items: center;
 `
-export const Check = styled.View`
+export const Check = styled(BorderlessButton)<CheckBox>`
+    background-color: ${props => props.active ? colors.secundary : 'white'};
+    border-radius: 8px;
+    height: 24px;
+    width: 24px;
+    margin-right: 6px;
+
+    align-items: center;
+    justify-content: center;
+
 `
 export const Text = styled.Text`
     color: ${colors["text-complement"]};
