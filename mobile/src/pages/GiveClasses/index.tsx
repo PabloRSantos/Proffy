@@ -42,7 +42,11 @@ const Profile: React.FC = () => {
             </DescriptionHeader>
           </Header>
 
-          <Form buttonText='Salvar cadastro' user={user}>
+          <Form
+            buttonText='Salvar cadastro'
+            user={user}
+            param='create'>
+              
             <User>
               <UserAvatar source={{uri: `http://10.0.0.106:3333/uploads/users/${user.avatar}`}}/>
               <UserInfos>

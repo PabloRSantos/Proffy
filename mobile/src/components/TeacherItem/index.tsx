@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {Linking} from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage'
 
@@ -9,6 +9,10 @@ import { Container,
      Nome,
      Subject,
      Bio,
+     Calendar,
+     TopCalendar,
+     Hour,
+     Day,
      Footer,
      Price,
      PriceValue,
@@ -23,6 +27,7 @@ import { Container,
  import unfavoriteIcon from '../../assets/images/icons/unfavorite.png'    
  import whatsappIcon from '../../assets/images/icons/whatsapp.png'    
 import api from '../../services/api';
+import TeacherCalendar from '../TeacherCalendar';
 
 
  export interface Teacher {
@@ -35,10 +40,10 @@ import api from '../../services/api';
         subject: string
         whatsapp: string
     },
-    schedule?: {
+    scheduleItem: [{
         day: number,
         hour: string,
-    }
+    }]
   }
 
 interface TeacherItemProps {
@@ -48,8 +53,7 @@ interface TeacherItemProps {
 
 const TeacherItem: React.FC<TeacherItemProps> = ({teacher, favorited}) => {
     const [isFavorited, setIsFavorited] = useState(favorited)
-
-
+    
     function handleToWhatsapp(){
         api.post('connections', {
             user_id: teacher.classItem.id
@@ -99,6 +103,25 @@ const TeacherItem: React.FC<TeacherItemProps> = ({teacher, favorited}) => {
           <Bio>
             {teacher.classItem.bio}
           </Bio>
+
+
+            <Calendar>
+                <TopCalendar>
+                    <Day>
+                        Dia
+                    </Day>
+
+                    <Hour>
+                        Horário
+                    </Hour>
+                </TopCalendar>
+
+                {teacher.scheduleItem.map((scheduleItem, index) => 
+                    <TeacherCalendar
+                        key={index}
+                        day={scheduleItem.day}
+                        hour={scheduleItem.hour}/>)}
+            </Calendar>
 
           <Footer>
               <Price>

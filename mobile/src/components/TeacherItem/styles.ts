@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import {RectButton} from 'react-native-gesture-handler'
+import colors from '../../assets/styles/colors';
 
 export const Container = styled.View`
     background-color: #fff;
@@ -47,10 +48,39 @@ export const Bio = styled.Text`
     margin-bottom: 8px;
 `
 
+export const Calendar = styled.View`
+    padding: 15px 24px;
+
+
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-color: ${colors["line-in-white"]};
+`
+
+export const TopCalendar = styled.View`
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between; 
+
+    padding: 0 15px;
+`
+
+export const Hour = styled.Text`
+    font-size: 10px;
+    font-family: "Poppins_400Regular";
+    color: ${colors["text-complement"]};
+`
+export const Day = styled.Text`
+     font-size: 10px;
+     font-family: "Poppins_400Regular";
+     color: ${colors["text-complement"]};
+`
+
 export const Footer = styled.View`
     background-color: #fafafc;
     padding: 24px;
     align-items: center;
+
 `
 export const Price = styled.Text`
     font-family: "Poppins_400Regular";

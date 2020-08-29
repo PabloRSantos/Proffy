@@ -1,6 +1,7 @@
 import styled, {css} from 'styled-components/native';
 import { ScreenHeight, ScreenWidth } from '../../assets/styles/screenSize';
 import colors from '../../assets/styles/colors';
+import {BorderlessButton} from 'react-native-gesture-handler'
 
 
 export const Container = styled.View`
@@ -34,7 +35,10 @@ export const Imagem = styled.Image`
     margin-bottom: 5px;
 `
 
-export const UpdateImagem = styled.View`
+export const UpdateImagem = styled(BorderlessButton)`
+    background-color: red;
+    width: 100px;
+    height: 100px;
 `
 
 export const Name = styled.Text`

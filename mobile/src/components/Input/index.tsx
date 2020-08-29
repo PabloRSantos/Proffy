@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes } from 'react';
+import React, { InputHTMLAttributes, useEffect } from 'react';
 
 import { Container, InputCustomized, Label} from './styles';
 import { TextInputProps } from 'react-native';
@@ -11,7 +11,6 @@ interface InputStlye extends TextInputProps{
 const Input: React.FC<InputStlye> = ({classInput, label, ...rest}) => {
 
   return (
-
       <Container>
           {label && <Label>{label}</Label>}
           <InputCustomized classInput={classInput} {...rest}/>

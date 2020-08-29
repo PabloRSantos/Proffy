@@ -13,8 +13,12 @@ import {
     TitleHeaderFieldSet,
      NewTime,
      NewTimeText,
-     ScheuduleGroup,
+     ScheduleGroup,
+     SelectContainer,
+     LabelSelect,
+     Select,
     ButtonContainer } from './styles';
+
 import Input from '../Input';
 import colors from '../../assets/styles/colors';
 import Button from '../Button';
@@ -23,7 +27,10 @@ import api from '../../services/api';
 
 interface IFormProps {
     buttonText: string,
-    user: IUser
+    user: IUser,
+    param: string,
+    classItem?: IClass,
+    Schedule?: ScheduleItem[]
 }
 
 export interface IClass {
@@ -31,51 +38,71 @@ export interface IClass {
     cost: string,
 }
 
-interface ScheduleItem {
+export interface ScheduleItem {
     week_day: number,
     from: string,
     to: string,
+    id?: number,
+    class_id?: number
 }
 
-const Form: React.FC<IFormProps> = ({children, buttonText, user}) => {
+const Form: React.FC<IFormProps> = ({children,
+     buttonText,
+     user,
+     classItem,
+     Schedule,
+     param}) => {
+
     const [classInfos, setClassInfos] = useState<IClass>({
         subject: '',
         cost: '',
     })
+
     const [schedule, setSchedule] = useState<ScheduleItem[]>([{
-            week_day: 0,
+            week_day: 1,
             from: '',
             to: ''
     }])
+
     const [userState, setUserState] = useState<IUser>(user)
 
-
-    useEffect(() => {
-        async function loadDatas(){
-            await api.get('user')
-        }
-
-        loadDatas()
-    }, [])
-
     useEffect(() => {
 
-        setUserState({...user, whatsapp: userState.whatsapp})
+        Schedule && setSchedule(Schedule)
+        classItem && setClassInfos(classItem)
 
-    }, [user])
-
-
-    function ChangeSchedule(index: number, campo: string, text: string){
+        if(userState.whatsapp)
+         setUserState({...user, whatsapp: userState.whatsapp})
         
-        const AlteredSchedule = [...schedule, {...schedule[index], [campo]: text}]
+        else
+         setUserState(user)
 
-        console.log(AlteredSchedule)
+    }, [user, classItem, Schedule])
+       
 
-        setSchedule(AlteredSchedule)
+    function ChangeSchedule(index: number, campo: string, text: string | number){
 
+
+        if(schedule.length === 1){
+            
+             const AlteredSchedule = [{...schedule[0], [campo]: text}]
+             setSchedule(AlteredSchedule)
+
+        } else {
+
+             const AlteredSchedule = schedule.map((scheduleItem, indexItem) => 
+                 indexItem !== index ? scheduleItem : {...scheduleItem, [campo]: text}
+                )
+
+             setSchedule(AlteredSchedule)
+        }
+        
     }
 
-    function deleteTime(index: number){
+    async function deleteTime(Item: ScheduleItem, index: number){
+
+        if(Item.id)
+            await api.delete(`/class/${Item.id}`)
 
         const newSchedule = schedule.filter((scheduleItem, indexItem) => indexItem !== index ? true : false)
 
@@ -83,17 +110,21 @@ const Form: React.FC<IFormProps> = ({children, buttonText, user}) => {
     }
 
     async function submitForm(){
-        const {data} = await api.post('classes', {
+        const requesParams = {
             whatsapp: userState.whatsapp,
             bio: userState.bio,
             subject: classInfos.subject,
             cost: classInfos.cost,
-            schedule,
-        })
+            scheduleItems: schedule
+        }
+
+        const {data} = param === 'create' ? 
+            await api.post('classes', requesParams) :
+            await api.put('updateInfos', requesParams)
 
         console.log(data)
-    }
 
+    }
 
 
   return (
@@ -142,15 +173,25 @@ const Form: React.FC<IFormProps> = ({children, buttonText, user}) => {
             </HeaderFieldSet>
 
         {schedule.map((ScheduleItem, index) => (
-            <ScheuduleGroup key={index}>
-                <Input
-                label='Dia da semana'
-                classInput="unique"
-                onChangeText={text => ChangeSchedule(index, 'week_day', text)}/>
+            <ScheduleGroup key={index}>
+
+                <LabelSelect>Dia da semana</LabelSelect>
+                <SelectContainer>
+                    <Select
+                    selectedValue={ScheduleItem.week_day.toString()}
+                    onValueChange={itemValue => ChangeSchedule(index, 'week_day', itemValue)}>
+                        <Select.Item label="Segunda" value="1" />
+                        <Select.Item label="Terça" value="2" />
+                        <Select.Item label="Quarta" value="3" />
+                        <Select.Item label="Quinta" value="4" />
+                        <Select.Item label="Sexta" value="5" />
+                    </Select>
+                </SelectContainer>
+
 
                 <InputGroup>
 
-                    <DeleteTime onPress={() => deleteTime(index)}>
+                    <DeleteTime onPress={() => deleteTime(ScheduleItem, index)}>
                         <DeleteTimeText>
                              Excluir horário
                         </DeleteTimeText>
@@ -169,11 +210,11 @@ const Form: React.FC<IFormProps> = ({children, buttonText, user}) => {
                     label='Até'
                     classInput="unique"
                     value={ScheduleItem.to}
-                    onChangeText={(text) => ChangeSchedule(index, 'to', text)}/>
+                    onChangeText={text => ChangeSchedule(index, 'to', text)}/>
                     </InputBlock>
 
                 </InputGroup>
-            </ScheuduleGroup>
+            </ScheduleGroup>
         ))}
 
         </Fieldset>

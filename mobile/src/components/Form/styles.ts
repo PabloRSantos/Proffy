@@ -2,6 +2,7 @@ import styled from "styled-components/native"
 import { ScreenWidth, ScreenHeight } from "../../assets/styles/screenSize"
 import colors from "../../assets/styles/colors"
 import { BorderlessButton } from 'react-native-gesture-handler'
+import {Picker} from '@react-native-community/picker';    
 
 export const Container = styled.View`
     margin-bottom: 20px;
@@ -110,10 +111,36 @@ export const NewTimeText = styled.Text`
 
 `
 
-export const ScheuduleGroup = styled.View`
+export const ScheduleGroup = styled.View`
     margin-top: 8px;
 `
 
+export const SelectContainer = styled.View`
+    
+    background-color: ${colors["box-footer"]};
+    border-radius: 8px;
+    border-width: 1px;
+    border-color: ${colors["line-in-white"]};
+
+    height: 60px;
+    justify-content: center;
+
+`
+
+export const LabelSelect = styled.Text`
+    margin: 10px 0 5px;
+    font-size: 13px;
+    color: ${colors["text-complement"]};
+    font-family: 'Poppins_400Regular';
+`
+
+export const Select = styled(Picker)`
+    width: 100%;
+    padding: 2px 20px;
+    font-size: ${ScreenWidth(0.04)};
+    font-family: 'Poppins_400Regular';
+    color: ${colors["text-base"]};
+`
 
 export const ButtonContainer = styled.View`
     background-color: ${colors["box-footer"]};

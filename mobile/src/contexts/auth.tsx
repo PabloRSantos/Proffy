@@ -40,11 +40,7 @@ export const AuthProvider: React.FC = ({children}) => {
 
         async function loadDatas(){
             const token = await AsyncStorage.getItem('@Proffy/token')
-
-            console.log(token)
-
             if(token){
-                console.log('a')
                 setUser(true)
                 api.defaults.headers['authorization'] = `Bearer ${token}`
             }
@@ -61,8 +57,6 @@ export const AuthProvider: React.FC = ({children}) => {
 
 
         if(data.token) {
-
-            console.log(loginData.remember)
 
             loginData.remember && await AsyncStorage.setItem('@Proffy/token', data.token)
             setUser(true)
