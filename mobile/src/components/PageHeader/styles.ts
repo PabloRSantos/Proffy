@@ -1,13 +1,18 @@
-import styled from 'styled-components/native';
+import styled, {css} from 'styled-components/native';
 import {BorderlessButton} from 'react-native-gesture-handler'
 import colors from '../../assets/styles/colors';
 import statusBarHeight from '../../assets/styles/statusBarHeight';
 import {ScreenWidth, ScreenHeight} from '../../assets/styles/screenSize';
 
-export const Container = styled.View`
+interface IContainerStyledProps{
+    extraCss: string
+}
 
+export const Container = styled.View<IContainerStyledProps>`
     background-color: #8257e5;
     padding: ${statusBarHeight}px 0 0;
+
+    ${props => props.extraCss != 'null' && css`${props.extraCss}`}
 `;
 
 

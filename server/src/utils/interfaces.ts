@@ -10,7 +10,8 @@ export interface IScheduleItems {
     week_day: number;
     from: string;
     to: string;
-    class_id?: number
+    class_id?: number;
+    id?: number;
 }
 
 export interface IClasses {

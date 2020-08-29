@@ -24,7 +24,7 @@ export const TopScreen = styled.View`
     width: ${ScreenWidth(.8)};
 `
 
-export const User = styled.View`
+export const User = styled(BorderlessButton)`
     flex-direction: row;
     align-items: center;
 `

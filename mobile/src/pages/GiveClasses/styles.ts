@@ -1,100 +1,63 @@
-import styled, {css} from 'styled-components/native';
-import { ScreenHeight, ScreenWidth } from '../../assets/styles/screenSize';
+import styled from 'styled-components/native';
+import { ScreenWidth, ScreenHeight } from '../../assets/styles/screenSize';
 import colors from '../../assets/styles/colors';
 
-
 export const Container = styled.View`
-     flex: 1;
+   flex: 1;
      align-items: center;
     background-color: ${colors["color-background"]};
-
 `;
 
 export const Scroll = styled.ScrollView`
      width: ${ScreenWidth()};
+
 `
 
-export const BackgroundImage = styled.ImageBackground`
+export const Header = styled.View`
     background-color: ${colors.primary};
-    padding: ${ScreenHeight(0.02)} 0  ${ScreenHeight(0.1)};
+    height: ${ScreenHeight(.38)};
+    padding: 0 ${ScreenWidth(0.05)} 30px;
+    justify-content: center;
 `
 
-export const User = styled.View`
-    align-items: center;
-    margin-top: 12px;
-`
-
-export const ImagemContainer = styled.View`
-`
-
-export const Imagem = styled.Image`
-    width: ${ScreenWidth(.24)};
-    height: ${ScreenWidth(.24)};
-    border-radius: ${ScreenWidth(.24 / 2)};
-    margin-bottom: 5px;
-`
-
-export const UpdateImagem = styled.View`
-`
-
-export const Name = styled.Text`
-    font-size: 24px;
+export const TitleHeader = styled.Text`
+    font-size: ${ScreenWidth(0.07)};
     font-family: 'Archivo_700Bold';
-    color: ${colors["button-text"]};
+    color: ${colors["title-in-primary"]};
+    margin-bottom: ${ScreenHeight(0.02)};
+
 `
 
-export const Subject = styled.Text`
-    font-size: 13px;
-    font-family: Poppins_400Regular;
+export const DescriptionHeader = styled.Text`
+    font-size: ${ScreenWidth(0.038)};
+    font-family: 'Poppins_400Regular';
     color: ${colors["text-in-primary"]};
 `
 
-export const Formulario = styled.View`
-    margin: 0 ${ScreenWidth(0.05)};
-    padding: ${ScreenWidth(0.05)};
-    margin-top: -${ScreenHeight(0.07)};
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-
-    background-color: ${colors["box-base"]};
-
-`
-
-export const Fieldset = styled.View`
-`
-
-interface ITitle {
-    first?: boolean,
-}
-
-export const Title = styled.Text<ITitle>`
-    color: ${colors["text-title"]};
-    font-size: 23px;
-    font-family: 'Archivo_700Bold';
-
-    padding-bottom: 8px;
-    border-bottom-color: ${colors["line-in-white"]};
-    border-bottom-width: 1px;
-
-    margin-top: 16px;
-
-    ${props => props.first && 'margin-top: 0'};
-`
-
-export const InputBlock = styled.View`
+export const User = styled.View`
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
+    margin: 12px 0;
 `
 
-export const ButtonContainer = styled.View`
-    background-color: ${colors["box-footer"]};
-
-    margin: 0 ${ScreenWidth(0.05)};
-    padding: ${ScreenWidth(0.05)};
-
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-
+export const UserAvatar = styled.Image`
+    height: ${ScreenWidth(0.17)};
+    width: ${ScreenWidth(0.17)};
+    border-radius: ${ScreenWidth(0.17 / 2)};
 `
 
+export const UserInfos = styled.View`
+    margin-left: 8px;
+`
+
+export const UserName = styled.Text`
+    font-size: ${ScreenWidth(0.055)};
+    font-family: 'Archivo_700Bold';
+    color: ${colors["text-title"]};
+`
+
+export const UserSubject = styled.Text`
+    font-size: ${ScreenWidth(0.032)};
+    font-family: 'Poppins_400Regular';
+    color: ${colors["text-base"]};
+`

@@ -22,10 +22,11 @@ interface PageHeaderProps {
     title?: string;
     headerRight?: ReactNode; //component react
     pageName: string;
+    extraCss?: string;
 }
 
 
-const PageHeader: React.FC<PageHeaderProps> = ({title, children, headerRight, pageName}) => {
+const PageHeader: React.FC<PageHeaderProps> = ({title, children, headerRight, pageName, extraCss}) => {
 
     const {navigate} = useNavigation()
 
@@ -36,7 +37,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({title, children, headerRight, pa
   return (
       <>
           <StatusBar style="light" backgroundColor={colors["primary-dark"]}/>
-  <Container>
+  <Container extraCss={extraCss || 'null'}>
 
     <TopBar>
         <Button onPress={handleGoBack}>

@@ -156,6 +156,7 @@ export default class UserController {
                 scheduleItems.forEach(async (item, index) => {
                         if(index >= scheduleCount[0].total){
                             item.class_id = scheduleItems[0].class_id
+                            
                                 await trx('class_schedule').insert({
                                 week_day: item.week_day,
                                 to: convertHourToMinutes(item.to),

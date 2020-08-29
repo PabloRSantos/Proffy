@@ -28,7 +28,7 @@ const Favorites: React.FC = () => {
 
   return (
     <Container>
-    <PageHeader title="Meus proffys favoritos"/>
+    <PageHeader pageName='Favoritos' title="Meus proffys favoritos" extraCss='padding-bottom: 50px;'/>
 
     <Scroll
       contentContainerStyle={{

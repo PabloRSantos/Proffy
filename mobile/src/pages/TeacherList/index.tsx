@@ -7,17 +7,17 @@ import {Feather} from '@expo/vector-icons'
 import { Container,
   Scroll,
   Filtros,
-  Label,
-  Input,
   InputGroup,
   InputBlock,
   BorderButton,
-  SubmitButton,
-  SubmitText} from './styles';
+  } from './styles';
   
 import PageHeader from '../../components/PageHeader';
 import TeacherItem, { Teacher } from '../../components/TeacherItem';
 import api from '../../services/api';
+import Input from '../../components/Input';
+import Button from '../../components/Button';
+import colors from '../../assets/styles/colors';
 
 
 
@@ -78,11 +78,13 @@ const TeacherList: React.FC = () => {
               <Feather name="filter" size={20} color="#fff"/>
           </BorderButton>
         )}
+        extraCss='padding-bottom: 40px;'
        >
          { filterVisible && (
           <Filtros>
-            <Label>Matéria</Label>
             <Input 
+            classInput='unique'
+            label='Matéria'
             value={subject}
             onChangeText={text => setSubject(text)}
             placeholder="Qual a matéria?" 
@@ -90,8 +92,9 @@ const TeacherList: React.FC = () => {
 
             <InputGroup>
               <InputBlock>
-                  <Label>Dia da semana</Label>
                 <Input
+                classInput='unique'
+                label='Dia da semana'
                  value={week_day}
                  onChangeText={text => setWeek_day(text)} 
                 placeholder="Qual o dia?" 
@@ -99,18 +102,17 @@ const TeacherList: React.FC = () => {
               </InputBlock>
 
               <InputBlock>
-                  <Label>Horário</Label>
                 <Input 
+                 classInput='unique'
+                 label='Horário'
                  value={time}
                  onChangeText={text => setTime(text)}
-                placeholder="Qual horário?" 
-                placeholderTextColor="#c1bccc"/>
+                  placeholder="Qual horário?" 
+                  placeholderTextColor="#c1bccc"/>
               </InputBlock>
             </InputGroup>
 
-            <SubmitButton onPress={loadDatas}>
-              <SubmitText>Filtrar</SubmitText>
-            </SubmitButton>
+            <Button onPress={loadDatas} text='Filtrar' color={colors.secundary}/>
             
           </Filtros>
          )}

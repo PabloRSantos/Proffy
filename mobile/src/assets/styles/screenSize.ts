@@ -7,6 +7,5 @@ export function ScreenWidth(multiplicador = 1){
 }
 
 export function ScreenHeight(multiplicador = 1){
-    console.log(height * multiplicador + 'px')
     return height * multiplicador + 'px'
 }

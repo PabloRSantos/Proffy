@@ -27,7 +27,7 @@ import heartIcon from "../../assets/images/icons/heart.png"
 import api from '../../services/api';
 import { useAuth } from '../../contexts/auth';
 
-interface IUser {
+export interface IUser {
     id?: number,
     name: string,
     sobrenome: string,
@@ -70,10 +70,14 @@ const Landing: React.FC = () => {
         navigation.navigate('Study')
     }
 
+    function handleNavigateToProfile(){
+        navigation.navigate('Profile')
+    }
+
   return (
      <Container>
          <TopScreen>
-             <User>
+             <User onPress={handleNavigateToProfile}>
                  <ProfileImage source={{uri: `http://10.0.0.106:3333/uploads/users/${user.avatar}`}}/>
                  <NameUser>{user.name} {user.sobrenome}</NameUser>
              </User>

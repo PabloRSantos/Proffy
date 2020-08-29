@@ -1,121 +1,61 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Container,
     Scroll,
-    BackgroundImage,
+    Header,
+    TitleHeader,
+    DescriptionHeader,
     User,
-    ImagemContainer,
-    Imagem,
-    UpdateImagem,
-    Name,
-    Subject,
-    Formulario,
-    Fieldset,
-    Title,
-    InputBlock,
-    ButtonContainer
-  } from './styles';
+    UserAvatar,
+    UserInfos,
+    UserName,
+    UserSubject } from './styles';
 
-import giveClassesBgImage from '../../assets/images/give-classes-background.png'
-import { useNavigation } from '@react-navigation/native';
 import PageHeader from '../../components/PageHeader';
-import Input from '../../components/Input';
-import Button from '../../components/Button';
-import colors from '../../assets/styles/colors';
+import Form from '../../components/Form';
+import { IUser } from '../Landing';
+import api from '../../services/api';
 
-const GiveClasses: React.FC = () => {
+const Profile: React.FC = () => {
+  const [user, setUser] = useState<IUser>({name: '', sobrenome: '', avatar: '', whatsapp: ''})
 
-    const {goBack} = useNavigation()
+  useEffect(() => {
+    
+    async function loadDatas(){
+      const {data} = await api.get('user')
+        setUser(data)
+    }
 
+    loadDatas()
+  }, [])
 
-  return (
+  return  (
     <>
-      <PageHeader pageName='Meu perfil'/>
-       
+      <PageHeader pageName='Dar aulas'/>
       <Container>
         <Scroll>
+          <Header>
+            <TitleHeader>Que incrível que você {'\n'}quer dar aulas.</TitleHeader>
+            <DescriptionHeader>
+              O primeiro passo, é preencher esse{'\n'}
+              formulário de inscrição.
+            </DescriptionHeader>
+          </Header>
 
-        <BackgroundImage
-          resizeMode="cover"
-          source={giveClassesBgImage}>
-          <User>
-              <ImagemContainer>
-                <Imagem source={{uri: `http://10.0.0.106:3333/uploads/users/default.png`}}/>
-                <UpdateImagem></UpdateImagem>
-              </ImagemContainer>
-
-              <Name>Pablo</Name>
-              <Subject>Geografia</Subject>
+          <Form buttonText='Salvar cadastro' user={user}>
+            <User>
+              <UserAvatar source={{uri: `http://10.0.0.106:3333/uploads/users/${user.avatar}`}}/>
+              <UserInfos>
+                <UserName>{user.name} {user.sobrenome}</UserName>
+                <UserSubject>Geografia</UserSubject>
+              </UserInfos>
             </User>
-          </BackgroundImage>
-
-          <Formulario>
-            <Fieldset>
-              <Title first={true}>Seus dados</Title>
-
-              <Input
-              label='Nome'
-              classInput="unique"/>
-
-              <Input
-              label='Sobrenome'
-              classInput="unique"/>
-
-              <Input
-              label='E-mail'
-              classInput="unique"/>
-
-              <Input
-              label='Whatsapp'
-              classInput="unique"/>
-
-            </Fieldset>
-
-            <Fieldset>
-              <Title>Sobre a aula</Title>
-
-              <Input
-              label='Matéria'
-              classInput="unique"/>
-
-              <Input
-              label='Custo da sua hora por aula'
-              classInput="unique"/>
-
-            </Fieldset>
-
-            <Fieldset>
-              <Title>Horários disponíveis</Title>
-
-              <Input
-              label='Dia da semana'
-              classInput="unique"/>
-
-              <InputBlock>
-                <Input
-                label='Das'
-                classInput="unique"/>
-
-                <Input
-                label='Até'
-                classInput="unique"/>
-              </InputBlock>
-
-            </Fieldset>
-
-          </Formulario>
-          
-          <ButtonContainer>
-              <Button
-                text='Salvar alterações'
-                color={colors.secundary}/>
-            </ButtonContainer>
+          </Form>
 
         </Scroll>
-        
       </Container>
     </>
   )
 }
 
-export default GiveClasses;
+export default Profile;
