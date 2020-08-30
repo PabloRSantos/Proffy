@@ -18,6 +18,7 @@ export interface IClasses {
     subject: string,
     cost: string,
     id: number,
+    user_id: number,
     schedule?: [IScheduleWeekDays]
 }
 

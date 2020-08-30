@@ -8,23 +8,32 @@ const uploadUserProfile = multer(user)
 import ClassesController from "./controllers/ClassesController"
 import ConenctionsController from "./controllers/ConnectionsController"
 import UserController from "./controllers/UsersController"
-import authMiddleware from './middlewares/auth'
+import SessionController from "./controllers/SessionController"
+import FavoritesController from "./controllers/FavoritesController"
 
+import authMiddleware from './middlewares/auth'
 
 const routes = express.Router()
 
 const classesControllers = new ClassesController()
 const conenctionsController = new ConenctionsController()
 const usersController = new UserController()
+const sessionController = new SessionController()
+const favoritesController = new FavoritesController()
 
 routes.post("/connections",conenctionsController.create)
 routes.get("/connections", conenctionsController.index)
 
-routes.post('/cadastro', usersController.create)
-routes.post('/login', usersController.login)
+routes.post('/cadastro', sessionController.create)
+routes.post('/login', sessionController.login)
+routes.get('/recover/password/:email', sessionController.recoverPassword)
+routes.put('/resetPassword', sessionController.resetPassword)
+
+routes.get('/favorites', authMiddleware, favoritesController.index)
+routes.post('/favorite', authMiddleware, favoritesController.add)
+routes.delete('/favorite/:id', authMiddleware, favoritesController.delete)
+
 routes.get('/user', authMiddleware, usersController.show)
-routes.get('/recover/password/:email', usersController.recoverPassword)
-routes.put('/resetPassword', usersController.resetPassword)
 routes.put('/updateInfos', authMiddleware, usersController.updateInfos)
 routes.put('/profilePic', authMiddleware, uploadUserProfile.single('imagem'), usersController.updateProfilePic)
 

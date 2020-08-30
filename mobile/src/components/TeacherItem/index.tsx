@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {Linking} from 'react-native'
-import AsyncStorage from '@react-native-community/async-storage'
 
 import { Container,
      Profile,
@@ -33,12 +32,14 @@ import TeacherCalendar from '../TeacherCalendar';
  export interface Teacher {
     classItem: {
         id: number
+        user_id: number
         avatar: string
         bio: string
         cost: number
         name: string
         subject: string
         whatsapp: string
+        favorite_id?: number
     },
     scheduleItem: [{
         day: number,
@@ -53,6 +54,10 @@ interface TeacherItemProps {
 
 const TeacherItem: React.FC<TeacherItemProps> = ({teacher, favorited}) => {
     const [isFavorited, setIsFavorited] = useState(favorited)
+
+    useEffect(() => {
+        setIsFavorited(favorited)
+    }, [favorited, teacher])
     
     function handleToWhatsapp(){
         api.post('connections', {
@@ -63,30 +68,15 @@ const TeacherItem: React.FC<TeacherItemProps> = ({teacher, favorited}) => {
 
     async function handleToggleFavorited(){
 
-        const favorites = await AsyncStorage.getItem('favorites')
-
-        let favoritesArray = []
-
-        if(favorites)
-        favoritesArray = JSON.parse(favorites)
-
-        if(isFavorited) {
-
-            const favoritedIndex = favoritesArray
-            .findIndex((teacherItem: Teacher) =>
-            teacherItem.classItem.id === teacher.classItem.id) //se for true retorna o id
-
-            favoritesArray.splice(favoritedIndex, 1)
+        if(isFavorited){
+            await api.delete(`favorite/${teacher.classItem.favorite_id}`)
+            console.log(teacher.classItem.favorite_id)
             setIsFavorited(false)
-
         } else {
-
-            favoritesArray.push(teacher)
+            await api.post(`favorite`, {class_id: teacher.classItem.id})
             setIsFavorited(true)
-
         }
 
-        await AsyncStorage.setItem('favorites', JSON.stringify(favoritesArray))
 
     }
 

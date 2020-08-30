@@ -10,6 +10,7 @@ import { Container,
     ImagemContainer,
     Imagem,
     UpdateImagem,
+    Camera,
     Name,
     Subject,
 
@@ -28,27 +29,21 @@ const GiveClasses: React.FC = () => {
   const [user, setUser] = useState<IUser>({name: '', sobrenome: '', avatar: ''})
   const [classes, setClasses] = useState<IClass>()
   const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>()
-  const [image, setImage] = useState<any>()
-
 
   useEffect(() => {
-    
-    async function loadDatas(){
-      const user = await api.get('user')
-      const {data} = await api.get('class')
-
-      setUser(user.data)
-
-      data.classes && setClasses(data.classes)
-      data.classes && setScheduleItems(data.scheduleClasses)
-    }
-
     loadDatas()
+    getPermissionAsync();
   }, [])
 
-  useEffect(() => {
-    getPermissionAsync();
-}, [])
+async function loadDatas(){
+  const user = await api.get('user')
+  const {data} = await api.get('class')
+
+  setUser(user.data)
+
+  data.classes && setClasses(data.classes)
+  data.classes && setScheduleItems(data.scheduleClasses)
+}
 
   async function getPermissionAsync (){
     if (Constants.platform?.ios) {
@@ -62,18 +57,38 @@ const GiveClasses: React.FC = () => {
   async function pickImage(){
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect: [4, 3],
+        aspect: [4, 4],
         quality: 1,
       });
       if (!result.cancelled) {
-          setImage(result.uri)
+        try {
+          let localUri: string = result.uri;
+          let filename: any = localUri.split('/').pop();
+        
+          let match = /\.(\w+)$/.exec(filename);
+          let type = match ? `image/${match[1]}` : `image`;
+        
+          const dataForm: any = new FormData()
+          
+          dataForm.append('imagem', { uri: localUri, name: filename, type });
+
+          await api.put('profilePic', dataForm)
+
+          loadDatas()
+
+        } catch(e){
+          alert('Erro ao alterar foto, tente novamente')
+        }
+
+          
       }
 
       console.log(result);
     } catch (e) {
       console.log(e);
+      alert('Erro ao alterar foto, tente novamente')
     }
   }
 
@@ -90,11 +105,16 @@ const GiveClasses: React.FC = () => {
           source={giveClassesBgImage}>
           <User>
               <ImagemContainer>
-                <Imagem source={{uri: `http://10.0.0.106:3333/uploads/users/default.png`}}/>
-                <UpdateImagem onPress={pickImage}></UpdateImagem>
+
+                <UpdateImagem onPress={pickImage}>
+                  <Camera />
+                </UpdateImagem>
+
+                <Imagem source={{uri: `http://10.0.0.106:3333/uploads/users/${user.avatar}`}}/>
+
               </ImagemContainer>
 
-              <Name>Pablo</Name>
+              <Name>{user.name} {user.sobrenome}</Name>
               <Subject>Geografia</Subject>
             </User>
           </BackgroundImage>

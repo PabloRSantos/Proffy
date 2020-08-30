@@ -5,19 +5,19 @@ import {useFocusEffect} from '@react-navigation/native'
 import { Container, Scroll } from './styles';
 import PageHeader from '../../components/PageHeader';
 import TeacherItem, { Teacher } from '../../components/TeacherItem';
+import api from '../../services/api';
 
 const Favorites: React.FC = () => {
   const [favorites, setFavorites] = useState([])
 
-  function loadFavorites(){
-    AsyncStorage.getItem(`favorites`)
-    .then(response => {
-      if(response) {
-       const favoritedTeachers = JSON.parse(response)
+  async function loadFavorites(){
+   const {data} = await api.get(`favorites`, {
+     params: {
+       page: 1
+     }
+   })
 
-       setFavorites(favoritedTeachers)
-      }
-    })
+   setFavorites(data.classes)
   }
 
   useFocusEffect(

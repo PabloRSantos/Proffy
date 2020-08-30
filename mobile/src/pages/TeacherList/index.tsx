@@ -37,16 +37,16 @@ const TeacherList: React.FC = () => {
     }, [])
   )
 
-  function loadFavorites(){
-    AsyncStorage.getItem(`favorites`)
-    .then(response => {
-      if(response) {
-       const favoritedTeachers = JSON.parse(response)
-       const favoritedTeachersIds = favoritedTeachers.map((teacher: Teacher) => teacher.classItem.id)
+  async function loadFavorites(){
+   const {data} = await api.get('favorites', {
+     params: {
+       page: 1
+     }
+   })
 
-       setFavorites(favoritedTeachersIds)
-      }
-    })
+   const favoritedsId = data.classes.map((dataItem: Teacher) => dataItem.classItem.id)
+   setFavorites(favoritedsId)
+
   }
 
   function handleFiltersVisible(){
@@ -63,6 +63,8 @@ const TeacherList: React.FC = () => {
       week_day,
       page: 1
     }})
+
+    console.log(data)
 
     setFilterVisible(false)
     setTeachers(data.classes)

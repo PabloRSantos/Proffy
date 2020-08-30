@@ -1,7 +1,8 @@
 import styled, {css} from 'styled-components/native';
 import { ScreenHeight, ScreenWidth } from '../../assets/styles/screenSize';
 import colors from '../../assets/styles/colors';
-import {BorderlessButton} from 'react-native-gesture-handler'
+import {RectButton} from 'react-native-gesture-handler'
+import { Feather } from '@expo/vector-icons'; 
 
 
 export const Container = styled.View`
@@ -26,6 +27,7 @@ export const User = styled.View`
 `
 
 export const ImagemContainer = styled.View`
+    position: relative;
 `
 
 export const Imagem = styled.Image`
@@ -35,10 +37,29 @@ export const Imagem = styled.Image`
     margin-bottom: 5px;
 `
 
-export const UpdateImagem = styled(BorderlessButton)`
-    background-color: red;
-    width: 100px;
-    height: 100px;
+export const UpdateImagem = styled(RectButton)`
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 3;
+
+    width: 35px;
+    height: 35px;
+    border-radius: ${35 / 2}px;
+
+    align-items: center;
+    justify-content: center;
+
+    background-color: ${colors.secundary};
+
+`
+
+export const Camera = styled(Feather).attrs({
+    name: 'camera',
+    size: 20,
+    color: 'white'
+})`
+
 `
 
 export const Name = styled.Text`
