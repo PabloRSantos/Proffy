@@ -85,7 +85,6 @@ async function loadDatas(){
           
       }
 
-      console.log(result);
     } catch (e) {
       console.log(e);
       alert('Erro ao alterar foto, tente novamente')

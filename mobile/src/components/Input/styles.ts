@@ -1,19 +1,23 @@
-import styled, {css} from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 import colors from '../../assets/styles/colors'
 
 interface InputPropsStyle {
-   classInput: string,
+  classInput: string,
+}
+
+interface LabelPropsStyle {
+  labelColor?: string;
 }
 
 export const Container = styled.View`
   min-width: 100%;
 `
 
-export const Label = styled.Text`
+export const Label = styled.Text<LabelPropsStyle>`
   margin: 10px 0 5px;
 
   font-size: 13px;
-  color: ${colors["text-complement"]};
+  color: ${props => props.labelColor ? props.labelColor : colors["text-complement"]};
   font-family: 'Poppins_400Regular';
 `
 

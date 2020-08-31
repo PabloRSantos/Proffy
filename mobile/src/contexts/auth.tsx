@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext} from "react"
+import React, { createContext, useState, useEffect, useContext } from "react"
 import api from "../services/api"
 import AsyncStorage from '@react-native-community/async-storage'
 
@@ -19,28 +19,38 @@ interface ISignUp {
 interface IContext {
     signed: boolean,
     user: boolean,
+    newUser: boolean
     SignIn: (loginData: ISignIn) => void,
     SignUp: (registerData: ISignUp) => void,
     SignOut: () => void,
-
+    FreeAcess: () => void,
 }
 
 const AuthContext = createContext<IContext>({
     signed: true,
     user: true,
-    SignIn: () => {},
-    SignUp: () => {},
-    SignOut: () => {},
+    newUser: true,
+    SignIn: () => { },
+    SignUp: () => { },
+    SignOut: () => { },
+    FreeAcess: () => { },
 })
 
-export const AuthProvider: React.FC = ({children}) => {
+export const AuthProvider: React.FC = ({ children }) => {
     const [user, setUser] = useState(false)
+    const [newUser, setNewUser] = useState(true)
 
     useEffect(() => {
 
-        async function loadDatas(){
+        async function loadDatas() {
+            const newUserStorage = await AsyncStorage.getItem('@Proffy/newUser')
+
+            if(newUserStorage){
+                setNewUser(false)
+            }
+
             const token = await AsyncStorage.getItem('@Proffy/token')
-            if(token){
+            if (token) {
                 setUser(true)
                 api.defaults.headers['authorization'] = `Bearer ${token}`
             }
@@ -50,20 +60,28 @@ export const AuthProvider: React.FC = ({children}) => {
 
     }, [])
 
-    async function SignIn(loginData: ISignIn){
+    async function FreeAcess(){
+        setNewUser(false)
+        await AsyncStorage.setItem('@Proffy/newUser', 'false')
+    }
+
+    async function SignIn(loginData: ISignIn) {
 
         try {
-        const {data} = await api.post('login', loginData)
+            const { data } = await api.post('login', loginData)
 
 
-        if(data.token) {
+            if (data.token) {
 
-            loginData.remember && await AsyncStorage.setItem('@Proffy/token', data.token)
-            setUser(true)
-            api.defaults.headers["authorization"] = `Bearer ${data.token}`
-        }
+                loginData.remember && await AsyncStorage.setItem('@Proffy/token', data.token)
+                setUser(true)
+                api.defaults.headers["authorization"] = `Bearer ${data.token}`
+            }
 
-        return data
+            if(data.message)
+                alert(data.message)
+
+            return data
 
         } catch (e) {
             console.log(e)
@@ -71,16 +89,19 @@ export const AuthProvider: React.FC = ({children}) => {
 
     }
 
-    async function SignUp(registerData: ISignUp){
+    async function SignUp(registerData: ISignUp) {
 
         try {
-            const {data} = await api.post('cadastro', registerData)
+            const { data } = await api.post('cadastro', registerData)
 
-            if(data.token) {
+            if (data.token) {
                 await AsyncStorage.setItem('@Proffy/token', data.token)
                 setUser(true)
                 api.defaults.headers["authorization"] = `Bearer ${data.token}`
             }
+
+            if(data.message)
+                alert(data.message)
 
             return data
 
@@ -89,7 +110,7 @@ export const AuthProvider: React.FC = ({children}) => {
         }
     }
 
-    async function SignOut(){
+    async function SignOut() {
         await AsyncStorage.removeItem('@Proffy/token')
         setUser(false)
         api.defaults.headers["authorization"] = ``
@@ -97,7 +118,7 @@ export const AuthProvider: React.FC = ({children}) => {
 
 
     return (
-        <AuthContext.Provider value={{signed: !!user, SignIn, SignUp, SignOut, user}}> 
+        <AuthContext.Provider value={{ signed: !!user, SignIn, SignUp, SignOut, FreeAcess, user, newUser}}>
             {children}
         </AuthContext.Provider>
     )

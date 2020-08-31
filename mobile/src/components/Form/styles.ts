@@ -139,7 +139,7 @@ export const Select = styled(Picker)`
     padding: 2px 20px;
     font-size: ${ScreenWidth(0.04)};
     font-family: 'Poppins_400Regular';
-    color: ${colors["text-base"]};
+    color: black;
 `
 
 export const ButtonContainer = styled.View`

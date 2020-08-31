@@ -67,10 +67,7 @@ const Login: React.FC = () => {
   }
 
   async function handleSubmit(){
-   const data = await SignIn(formData)
-
-   console.log(data)
-
+   await SignIn(formData)
   }
 
   return (
@@ -108,6 +105,7 @@ const Login: React.FC = () => {
           <Input
           classInput={'last'}
           placeholder='Senha'
+          secureTextEntry={true}
           onChangeText={text => setFormData({...formData, password: text})}
           />
 

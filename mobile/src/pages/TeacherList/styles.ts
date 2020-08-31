@@ -1,13 +1,20 @@
 import styled from 'styled-components/native';
-import {BorderlessButton, RectButton} from 'react-native-gesture-handler'
+import {BorderlessButton} from 'react-native-gesture-handler'
+import {FlatList} from 'react-native';
+import { ScreenHeight} from '../../assets/styles/screenSize';
+
+interface LoadingPropsStyled {
+  page: number;
+}
 
 export const Container = styled.View`
   flex: 1;
   background-color: #f0f0f7;
 `;
 
-export const Scroll = styled.ScrollView`
+export const Lista = styled(FlatList)`
   margin-top: -40px;
+  flex: 1;
 `
 
 export const BorderButton = styled(BorderlessButton)``
@@ -29,6 +36,10 @@ export const InputGroup = styled.View`
 `
 export const InputBlock = styled.View`
   width: 48%;
+`
+
+export const Loading = styled.ActivityIndicator<LoadingPropsStyled>`
+  margin-top: ${props => props.page === 1 ? ScreenHeight(.3) : 0};
 `
 
 

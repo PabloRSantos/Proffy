@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useCallback} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
-import { Container,
+import {
+  Container,
   TopScreen,
   Header,
   BackIcon,
@@ -34,15 +35,16 @@ const Cadastro: React.FC = () => {
   const [placeHolder, setPlaceHolder] = useState(['Nome', 'Sobrenome'])
   const [textButton, setTextButton] = useState('Próximo')
   const [page, setPage] = useState(1)
-  const [formData, setFormData] = useState<ICadastroForm>({Nome: '', Sobrenome: '', Email: '', Senha: ''})
+  const [security, setSecurity] = useState(false)
+  const [formData, setFormData] = useState<ICadastroForm>({ Nome: '', Sobrenome: '', Email: '', Senha: '' })
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-  const {goBack} = useNavigation()
-  const {SignUp} = useAuth()
+  const { goBack } = useNavigation()
+  const { SignUp } = useAuth()
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true));
 
-    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide',() => setKeyboardVisible(false))
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => setKeyboardVisible(false))
 
     return () => {
       keyboardDidHideListener.remove();
@@ -50,30 +52,28 @@ const Cadastro: React.FC = () => {
     };
   }, []);
 
-  
-    BackHandler.addEventListener('hardwareBackPress', () => {
-      page === 1 ? goBack() : handlePage()
-      return true
-    })
+
+  BackHandler.addEventListener('hardwareBackPress', () => {
+    page === 1 ? goBack() : handlePage()
+    return true
+  })
 
 
-  async function handleButton(){
+  async function handleButton() {
     if (page === 1) return handlePage()
 
-    const data = await SignUp({
+     await SignUp({
       name: formData.Nome,
       sobrenome: formData.Sobrenome,
       email: formData.Email,
       password: formData.Senha
     })
 
-    console.log(data)
-
   }
 
-  function handlePage(){
+  function handlePage() {
 
-    if(page === 1){
+    if (page === 1) {
       setTitleForm('02. Email e senha')
       setColor(colors.secundary)
       setPlaceHolder(['Email', 'Senha'])
@@ -85,6 +85,7 @@ const Cadastro: React.FC = () => {
       setColor(colors.primary)
       setPlaceHolder(['Nome', 'Sobrenome'])
       setTextButton('Próximo')
+      setSecurity(true)
       setPage(1)
     }
   }
@@ -98,11 +99,11 @@ const Cadastro: React.FC = () => {
 
           <Header>
             <BorderlessButton onPress={() => page === 1 ? goBack() : handlePage()}>
-              <BackIcon/>
+              <BackIcon />
             </BorderlessButton>
             <ProgressStatus>
-              <ProgressItem active={page === 1 ? true : false}/>
-              <ProgressItem active={page === 2 ? true : false}/>
+              <ProgressItem active={page === 1 ? true : false} />
+              <ProgressItem active={page === 2 ? true : false} />
             </ProgressStatus>
           </Header>
 
@@ -113,7 +114,7 @@ const Cadastro: React.FC = () => {
             <Span>
               Basta preencher esses dados{'\n'}e você estará conosco.
             </Span>
-        </InfosTop>
+          </InfosTop>
 
         </TopScreen>
       )}
@@ -125,20 +126,21 @@ const Cadastro: React.FC = () => {
         </TitleForm>
         <Form>
           <Input
-          classInput={'first'}
-          placeholder={placeHolder[0]}
-          onChangeText={text => setFormData({...formData, [placeHolder[0]]: text})}/>
+            classInput={'first'}
+            placeholder={placeHolder[0]}
+            onChangeText={text => setFormData({ ...formData, [placeHolder[0]]: text })} />
 
           <Input
-          classInput={'last'}
-          placeholder={placeHolder[1]}
-          onChangeText={text => setFormData({...formData, [placeHolder[1]]: text})}/>
+            classInput={'last'}
+            placeholder={placeHolder[1]}
+            secureTextEntry={security}
+            onChangeText={text => setFormData({ ...formData, [placeHolder[1]]: text })} />
 
         </Form>
-        <Button text={textButton} color={color} onPress={handleButton}/>
+        <Button text={textButton} color={color} onPress={handleButton} />
       </BottomScreen>
 
-      
+
     </Container>
   )
 }
