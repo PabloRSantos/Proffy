@@ -8,9 +8,8 @@ export async function up(knex: Knex){
         
         table.integer("user_id")
         .notNullable().references("id")
-        .inTable("users").onDelete("CASCADE")
-        .onUpdate("CASCADE")  //qnd exclui ou altera algo na table users, aq também é 
-        //alterado ou excluido
+        .inTable("users")
+      
         
     })
 }

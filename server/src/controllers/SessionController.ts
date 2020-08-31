@@ -10,39 +10,51 @@ import sendEmail from '../utils/sendEmail'
 
 export default class SessionController {
     async create (req: Request, res:Response){
-        let {email, name, sobrenome, password} = req.body
 
-        password = await bcrypt.hash(password, 10)
+        try {
+            let {email, name, sobrenome, password} = req.body
 
-        const users = await db('users').first().where('email', email)
+            password = await bcrypt.hash(password, 10)
 
-        if(users) {
-            return res.json({error: 'Email já cadastrado'})
+            const users = await db('users').first().where('email', email)
+
+            if(users) {
+                return res.json({message: 'Email já cadastrado'})
+            }
+
+            const userId = await db("users").insert({email, password, name, sobrenome})
+
+            return res.json({
+            token: generateToken(userId.toString()),
+            userId
+            })
+        } catch (error) {
+            console.log(error)
+            return res.json({message: 'Erro ao cadastrar novo usuário'})
         }
-
-        const userId = await db("users").insert({email, password, name, sobrenome})
-
-        return res.json({
-           sucess: "Cadastrado com sucesso", 
-           token: generateToken(userId.toString()),
-           userId
-       })
    }
 
    async login (req: Request, res:Response){
-       let {email, password} = req.body
+       try {
+           
+            let {email, password} = req.body
 
-       const user: IUsers = await db('users').where("email", email).select('id', 'password').first()
+            const user: IUsers = await db('users').where("email", email).select('id', 'password').first()
 
-       if(!user){
-           return res.json({error: 'Usuário não encontrado'})
-       }
+            if(!user){
+                return res.json({message: 'Usuário não encontrado'})
+            }
 
-       if(!await bcrypt.compare(password, user.password)){
-           return res.json({error: "Ooops, a senha não confere"})
-       }
+            if(!await bcrypt.compare(password, user.password)){
+                return res.json({message: "Ooops, a senha não confere"})
+            }
 
-       return res.json({token: generateToken(user.id.toString())})
+            return res.json({token: generateToken(user.id.toString())})
+
+        } catch (error) {
+            console.log(error)
+            return res.json({message: 'Erro ao logar'})
+        }
 
 
    }
@@ -82,6 +94,7 @@ export default class SessionController {
     return res.json({message: 'enviado'})
 } catch (e){
     console.log(e)
+    return res.json({message: 'Erro ao enviar email'})
 }
 }
 
@@ -113,6 +126,7 @@ export default class SessionController {
 
         } catch (e) {
             console.log(e)
+            return res.json({message: 'Erro ao alterar senha'})
         }
         
     }

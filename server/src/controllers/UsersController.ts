@@ -64,9 +64,6 @@ export default class UserController {
 
              }
 
-
-
-
             const userId = req.userId
 
             if(classes) {

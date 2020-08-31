@@ -10,9 +10,6 @@ export default class FavoritesController{
         try {
             const user_id = req.userId
 
-            const {page} = req.query
-            const skip = (Number(page) - 1) * 5
-            let totalItems: Array<{pages: Number}> = []
             let classes: Array<IClasses> = []
             let schedule: Array<IScheduleItems> = []
 
@@ -21,48 +18,57 @@ export default class FavoritesController{
                 .where('favorites.user_id', user_id)
                 .join('classes', 'classes.id', '=', 'favorites.class_id')
                 .join("users", "classes.user_id", "=", "users.id")
-                .select('classes.*', 'users.*', 'favorites.id as favorite_id')
-                .limit(5)
-                .offset(skip)
+                .select('classes.*', 'users.*', 'favorites.id as favorite_id', 'classes.id as class_id')
 
             schedule = await db('favorites')
                 .where({user_id})
                 .join('class_schedule', 'class_schedule.class_id', '=', 'favorites.class_id')
-                .limit(5)
-                .offset(skip)
 
-            totalItems = await db('classes').count('* as pages')
             
-            var { pages } = totalItems[0]
-            pages = Number(pages) / 5
-
             const classesSchedule = classesWithSchedule(classes, schedule)
 
-            return res.json({pages, classes: classesSchedule})
+            return res.json({classes: classesSchedule})
 
         } catch (error) {
             console.log(error)
-            return res.json({})
+            return res.json({message: 'Erro ao listar aulas'})
         }
     }
 
     async add (req: Request, res: Response){
-        const {class_id} = req.body
-        const user_id = req.userId
-    
-        await db('favorites').where({user_id}).insert({
-            class_id,
-            user_id
-        })
+        try {
+            
+            const {class_id} = req.body
+            const user_id = req.userId
+        
+            await db('favorites').where({user_id}).insert({
+                class_id,
+                user_id
+            })
 
-        return res.json({message: 'Favoritado com sucesso'})
+            return res.json({message: 'Favoritado com sucesso'})
+        } catch (error) {
+            console.log(error)
+            return res.json({message: 'Erro ao favoritar aula'})   
+        }
     }
 
     async delete (req: Request, res: Response){
-        const {id} = req.params
-    
-        await db('favorites').where({id}).del()
 
-        return res.json({message: 'Desfavoritado com sucesso'})
+        try {
+        
+            const class_id = req.params.id
+            const user_id = req.userId
+
+            await db('favorites')
+                .where({class_id, user_id})
+                .del()
+
+            return res.json({message: 'Desfavoritado com sucesso'})
+        } catch (error) {
+            console.log(error)
+            return res.json({message: 'Erro ao desfavoritar aula'})
+        }
     }
+
 }

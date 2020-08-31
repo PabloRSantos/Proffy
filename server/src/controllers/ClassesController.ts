@@ -3,7 +3,7 @@ import {Request, Response} from "express"
 import db from "../database/connection"
 import convertHourToMinutes from "../utils/convertHourToMinutes"
 import convertMinutesToHour from "../utils/convertMinutosToHour"
-import { IClasses, IScheduleItems, IScheduleWeekDays } from "../utils/interfaces"
+import { IClasses, IScheduleItems } from "../utils/interfaces"
 import classesWithSchedule from "../utils/classesWithSchedule"
 
 
@@ -13,7 +13,7 @@ export default class ClassesController {
     async index (req: Request, res: Response){
         try {
             const {page, ...filters} = req.query
-            const skip = (Number(page) - 1) * 5
+            const skip = (Number(page) - 1) * 10
             let totalItems: Array<{pages: Number}> = []
             let classes: Array<IClasses> = []
             let schedule: Array<IScheduleItems> = []
@@ -32,8 +32,8 @@ export default class ClassesController {
                 .andWhere('class_schedule.from', '<=', timeInMinute)
                 .andWhere('class_schedule.to', '>', timeInMinute)
                 .andWhere("classes.subject", subject)
-                .select('classes.*', 'users.*')
-                .limit(5)
+                .select('classes.*', 'users.*', 'classes.id as class_id')
+                .limit(10)
                 .offset(skip)
 
                 schedule = await db('class_schedule')
@@ -43,7 +43,7 @@ export default class ClassesController {
                 .andWhere('class_schedule.to', '>', timeInMinute)
                 .andWhere("classes.subject", subject)
                 .select('class_schedule.*')
-                .limit(5)
+                .limit(10)
                 .offset(skip)
 
                 totalItems = await db('classes')
@@ -55,26 +55,26 @@ export default class ClassesController {
                     .count('* as pages')
 
                 var { pages } = totalItems[0]
-                pages = Number(pages) / 5
+                pages = Number(pages) / 10
 
             } else {
                 classes = await db('classes')
                 .join("users", "classes.user_id", "=", "users.id")
                 .join('class_schedule', 'class_schedule.class_id', '=', 'classes.id')
-                .select('classes.*', 'users.*')
+                .select('classes.*', 'users.*', 'classes.id as class_id')
                 .distinct('users.id')
-                .limit(5)
+                .limit(10)
                 .offset(skip)
 
                 schedule = await db('class_schedule')
-                .limit(5)
+                .limit(10)
                 .offset(skip)
 
 
                 totalItems = await db('classes').count('* as pages')
 
                 var { pages } = totalItems[0]
-                pages = Number(pages) / 5
+                pages = Number(pages) / 10
 
             }   
 
@@ -97,10 +97,9 @@ export default class ClassesController {
             bio,
             subject,
             cost,
-            schedule} = req.body
-    
+            scheduleItems} = req.body
+
             const trx = await db.transaction()
-    
     
             try {        
     
@@ -115,11 +114,11 @@ export default class ClassesController {
                     subject,
                     cost,
                     user_id
-                })
+                }).returning('id')
 
                 const class_id = insertedClassesIds[0]
     
-                const classSchedule = schedule.map((scheduleItem: IScheduleItems) => {
+                const classSchedule = scheduleItems.map((scheduleItem: IScheduleItems) => {
                     return {
                         class_id,
                         week_day: scheduleItem.week_day,
@@ -132,16 +131,14 @@ export default class ClassesController {
     
                 await trx.commit()
     
-                return res.status(201).json({message: "Criado com sucesso"})
+                return res.json({message: "Criado com sucesso"}).status(201)
     
             } catch (err){
                 await trx.rollback()
 
-                console.log(err)
-    
-                return res.status(400).json({
-                    error: "Erro ao criar nova classe"
-                })
+                return res.json({
+                    message: "Erro ao criar nova classe"
+                }).status(400)
             }
     
     }
@@ -175,10 +172,15 @@ export default class ClassesController {
     }
 
     async delete (req: Request, res: Response){
-        const {id} = req.params
+        try {
+            const {id} = req.params
 
-        await db('class_schedule').where({id}).del()
+            await db('class_schedule').where({id}).del()
 
-        return res.json({message: 'Excluido com sucesso'})
+            return res.json({message: 'Excluido com sucesso'})
+        } catch (e) {
+            console.log(e)
+            return res.json({message: 'Erro ao excluir'})
+        }
     }
 }
