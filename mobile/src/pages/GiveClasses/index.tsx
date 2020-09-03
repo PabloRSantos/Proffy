@@ -50,7 +50,7 @@ const Profile: React.FC = () => {
             param='create'>
 
             <User>
-              <UserAvatar source={{ uri: `http://10.0.0.106:3333/uploads/users/${user.avatar}` }} />
+              <UserAvatar source={{ uri: `https://profit-backend09.herokuapp.com/uploads/users/${user.avatar}` }} />
               <UserInfos>
                 <UserName>{user.name} {user.sobrenome}</UserName>
                 <UserSubject>Geografia</UserSubject>

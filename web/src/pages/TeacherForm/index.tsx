@@ -99,7 +99,7 @@ const TeacherForm = () => {
           <section className="whatsapp_user">
 
           <div className="user">
-              <img src={`http://localhost:3333/uploads/users/${user.avatar}`} alt=""/>
+              <img src={`https://profit-backend09.herokuapp.com/uploads/users/${user.avatar}`} alt=""/>
 
               <p>{`${user.name} ${user.sobrenome}`}</p>
             </div>
@@ -164,11 +164,11 @@ const TeacherForm = () => {
               value={scheduleItem.week_day}
               onChange={e => setScheduleItemValue(index, "week_day", e.target.value)}
               options={[
-                {value: "0", label: "Segunda-feira"},
-                {value: "1", label: "Terça-feira"},
-                {value: "2", label: "Quarta-feira"},
-                {value: "3", label: "Quinta-feira"},
-                {value: "4", label: "Sexta-feira"},
+                {value: "1", label: "Segunda-feira"},
+                {value: "2", label: "Terça-feira"},
+                {value: "3", label: "Quarta-feira"},
+                {value: "4", label: "Quinta-feira"},
+                {value: "5", label: "Sexta-feira"},
               ]}
               />
 

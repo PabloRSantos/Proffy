@@ -71,7 +71,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   <div className="header-content">
     {profilePicState && (
       <div className='profilePic'>
-        <img src={`http://localhost:3333/uploads/users/${profilePicState}`} alt="Profile Pic"/>
+        <img src={`https://profit-backend09.herokuapp.com/uploads/users/${profilePicState}`} alt="Profile Pic"/>
         <div className='changePic'>
             <img
             src={Camera}

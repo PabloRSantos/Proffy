@@ -14,7 +14,7 @@ export default class UserController {
         try {
             const id = req.userId
 
-            const user = await db('users').where({id}).first()
+            const user = await db('users').where('id', id).first()
 
             return res.json(user)
 

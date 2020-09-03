@@ -23,7 +23,7 @@ const TeacherItem: React.FC<PropsTeacherItem> = ({teacher, class_schedule}) => {
   return (
     <article className="teacher-item">
     <header>
-      <img src={`http://localhost:3333/uploads/users/${teacher.avatar}`} alt={teacher.name} />
+      <img src={`https://profit-backend09.herokuapp.com/uploads/users/${teacher.avatar}`} alt={teacher.name} />
       <div>
         <strong>{teacher.name}</strong>
         <span>{teacher.subject}</span>

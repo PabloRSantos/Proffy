@@ -80,7 +80,7 @@ const Landing: React.FC = () => {
         <Container>
             <TopScreen>
                 <User onPress={handleNavigateToProfile}>
-                    <ProfileImage source={{ uri: `http://10.0.0.106:3333/uploads/users/${user.avatar}` }} />
+                    <ProfileImage source={{ uri: `https://profit-backend09.herokuapp.com/uploads/users/${user.avatar}` }} />
                     <NameUser>{user.name} {user.sobrenome}</NameUser>
                 </User>
 

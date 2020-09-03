@@ -11,7 +11,6 @@ const db = knex({
         password : process.env.PG_PASSWORD,
         database : process.env.PG_DATABASE,
     },
-    useNullAsDefault: true, //só pra sqlite
 })
 
 export default db

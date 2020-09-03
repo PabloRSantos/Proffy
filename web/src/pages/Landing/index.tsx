@@ -50,7 +50,7 @@ const Landing = () => {
         <main id="main-landing">
             <header>
                 <Link to='/profile' className="user">
-                    <img src={`http://localhost:3333/uploads/users/${user.avatar}`} alt="Profile"/>
+                    <img src={`https://profit-backend09.herokuapp.com/uploads/users/${user.avatar}`} alt="Profile"/>
                     <p>{user.name}</p>
                 </Link>
 

@@ -109,7 +109,7 @@ async function loadDatas(){
                   <Camera />
                 </UpdateImagem>
 
-                <Imagem source={{uri: `http://10.0.0.106:3333/uploads/users/${user.avatar}`}}/>
+                <Imagem source={{uri: `https://profit-backend09.herokuapp.com/uploads/users/${user.avatar}`}}/>
 
               </ImagemContainer>
 

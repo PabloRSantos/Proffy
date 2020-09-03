@@ -84,7 +84,7 @@ const TeacherItem: React.FC<TeacherItemProps> = ({ teacher, favorited }) => {
     return (
         <Container>
             <Profile>
-                <Avatar source={{ uri: `http://10.0.0.106:3333/uploads/users/${teacher.classItem.avatar}` }} />
+                <Avatar source={{ uri: `https://profit-backend09.herokuapp.com/uploads/users/${teacher.classItem.avatar}` }} />
                 <ProfileInfo>
                     <Nome>{teacher.classItem.name}</Nome>
                     <Subject>{teacher.classItem.subject}</Subject>

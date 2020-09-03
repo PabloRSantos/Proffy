@@ -51,6 +51,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
             const token = await AsyncStorage.getItem('@Proffy/token')
             if (token) {
+                console.log(token)
                 setUser(true)
                 api.defaults.headers['authorization'] = `Bearer ${token}`
             }

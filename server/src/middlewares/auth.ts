@@ -4,7 +4,6 @@ import jwt from 'jsonwebtoken'
 export default function authMiddleware (req: Request, res: Response, next: NextFunction){
     const authHeader = req.headers.authorization
     const auth = process.env.JWT_AUTH as string
-    
 
     if(!authHeader)
         return res.json({error: 'Token não informado'})
