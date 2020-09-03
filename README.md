@@ -80,12 +80,13 @@ O projeto foi desenvolvido utilizando as seguintes tecnologias
 
 # :eyes: Link Website
 Você pode acessar o website em:   
-👉  https://proffy-rafa.netlify.app/ 
+👉  https://proffy08.netlify.app/ 
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/6b13a4b1-96e1-4ff3-86e3-4c9b981c77cf/deploy-status)](https://app.netlify.com/sites/proffy-rafa/deploys)      
+[![Netlify Status](https://api.netlify.com/api/v1/badges/6b13a4b1-96e1-4ff3-86e3-4c9b981c77cf/deploy-status)](https://proffy08.netlify.app)      
 
+<a id="como-usar"></a>
 
-# :construction_worker: Como executar
+# :construction_worker: Como usar
   ### **Pré-requisitos**
 
   - É **necessário** possuir o **[Node.js](https://nodejs.org/en/)** instalado na máquina
@@ -140,10 +141,11 @@ $ yarn start
 ```
 Depois leia o QRCode com seu app [expo](https://play.google.com/store/apps/details?id=host.exp.exponent) ou execute pelo emulador.
 
+<a id="como-contribuir"></a>
 
 ## :tada: Como contribuir
 
-- Faça um Fork desse repositório,
+- Faça um Fork desse repositório
 - Crie uma branch com a sua feature: `git checkout -b my-feature`
 - Commit suas mudanças: `git commit -m 'feat: My new feature'`
 - Push a sua branch: `git push origin my-feature`
